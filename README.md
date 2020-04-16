@@ -7,11 +7,11 @@ I also assume that you are like me and know something about programming but not 
 Finally, as per unwritten Arch linux community rules apparently these tips/guides should not exists in the first place so do not read this. These are my own personal notes.
 
 
+
 ## Basic commands needed
 
 There are few stuff that gets done repeatedly in Arch. I write these down as a reference. 
 
-TODO: launching services.
 
 ### Systemctl
 
@@ -50,51 +50,16 @@ that should show correct timezone and correct localtime.
 System clock is quite stable and robust so I don't see any point launching a daemon to keep it up to date. One can do this manually with the above commands instead once per year or so if you like your seconds to be correct.
 
 
-## bootctl
-
-TODO: write modifications of what I did
-
-## throttled
-
-TODO: is it needed? Seems to work fine without.
-
 ## wifi
 
 For wifi you have to options: `netctl` or `NetworkManager`. Both are relatively easy to use BUT do not work if they are both running simultaneously. Pick one.
 
 TODO: write how to save wlan configurations and autoconnect.
 
-## Tiling window manager awesome
-
-Tiling window managers are the best. I installed Awesome to my Arch. 
-
-Process is relatively straightforward but to get transparency also working you need these packages:
-
-```
-xcompmgr
-transset-df
-awesome
-```
-
-In addition, the xinitrc needs to be modified.
-TODO: xinit mods
-TODO: modified rc.lua
-
-
-### automatic window opening & setup
-
-read awesome documentation
-
 
 ## terminal
 
-A good and flexible terminal is a must. Many recommend:
-
-```
-rxvt-unicode
-```
-
-In order to make it look pretty I modified .Xresoures as
+A good and flexible terminal is a must. Many recommend `rxvt-unicode`.
 
 A reasonable terminal font is the hand-groomed hack (install with pkg `ttf-hack`).
 
@@ -187,7 +152,8 @@ TODO: make it stick
 
 In order to get the thinkpad extra keyboard keys working the running kernel needs to be updated with the thinkpad_acpi module.
 
-TODO: describe it;
+TODO: Add installation notes
+
 
 Next we need a script that listens to keypresses, captures them and lets us perform stuff based on them.
 
@@ -286,13 +252,38 @@ xset r rate 225 33
 ```
 
 
+## Tiling window manager Awesome
+
+Tiling window managers are the best. I installed Awesome to my Arch. 
+
+Process is relatively straightforward but to get transparency also working you need these packages:
+
+```
+xcompmgr
+transset-df
+awesome
+```
+
+In addition, the xinitrc needs to be modified.
+
+TODO: xinitrc mods
+
+TODO: modified rc.lua
 
 
-## Dropbox
 
-rclone?
+# Work in Progress:
 
+## bootctl
 
+TODO: write modifications of what I did
 
+## throttled
+
+TODO: is it needed? Seems to work fine without.
+
+### automatic window opening & setup
+
+TODO: read awesome documentation
 
 
