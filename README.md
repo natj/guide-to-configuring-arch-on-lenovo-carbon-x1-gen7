@@ -28,8 +28,6 @@ systemctl start <service_name>
 ```
 
 
-
-
 ## time
 
 If you have opened Windows before installing Linux it might have messed your internal system clock. This is the clock that stores time when you shutdown the computer and reload. Win10 apparently overwrites the time with timezone settings so there might be +-few hour mismatch to real time in Linux.
@@ -98,7 +96,66 @@ rxvt-unicode
 
 In order to make it look pretty I modified .Xresoures as
 
-TODO: add xresources mods
+A reasonable terminal font is the hand-groomed hack (install with pkg `ttf-hack`).
+
+To load these with reasonable colors, we can modify the `.Xresources` as
+
+```
+! fix HiDpi scaling 
+Xft.dpi: 192
+
+*background: #2f343f
+*foreground: #d7d7d7
+*cursorColor: #c7c7c7
+*highlightTextColor: #383c4a
+*highlightColor: #c1ddff
+
+! black
+*.color0: #383c4a
+*.color8: #383c4a
+
+! red
+*.color1: #e28d9d
+*.color9: #e28d9d
+
+! green
+*.color2:  #bfd888
+*.color10: #bfd888
+ 
+! yellow
+*.color3:  #df936c
+*.color11: #df936c
+
+! blue
+*.color4:  #5294e2
+*.color12: #5294e2
+
+! magenta
+*.color5:  #f74771
+*.color13: #f74771
+
+! cyan
+*.color6:  #7c818c
+*.color14: #7c818c
+
+! white
+*.color7: #d7d7d7
+*.color15: #d7d7d7
+
+urxvt*scrollBar: False
+
+URxvt.transparent: true
+URxvt.shading: 20
+
+urxvt*transparent: true
+urxvt*shading: 20
+
+URxvt.font:       xft:Hack-Regular:pixelsize=22
+URxvt.boldFont:   xft:Hack-Bold:pixelsize=22
+URxvt.italicFont: xft:Hack-RegularOblique:pixelsize=22:slant=italic
+URxvt.letterSpace: 0
+
+```
 
 
 ## audio
@@ -134,13 +191,7 @@ TODO: describe it;
 
 Next we need a script that listens to keypresses, captures them and lets us perform stuff based on them.
 
-Install:
-
-```
-acpid 
-```
-
-enabled it to systemctl.
+Install `acpid` for that. Enabled it to systemctl.
 
 Try with live capturing:
 ```
