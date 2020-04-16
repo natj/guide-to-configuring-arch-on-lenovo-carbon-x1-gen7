@@ -1,12 +1,31 @@
-#Configuring Arch Linux on Thinkpad X1 Carbon Gen7
+# Configuring Arch Linux on Thinkpad X1 Carbon Gen7
 
-For installation notes check installation guide on X1C6. 
+For installation notes check installation guide e.g. on [X1C6](https://github.com/ejmg/an-idiots-guide-to-installing-arch-on-a-lenovo-carbon-x1-gen-6). These notes focus on configuring the OS to work with X1C7 and assume that you have already succesfully installed the basic Arch Linux distribution.
 
-I assume that you are like me and know something about programming but not much about linux. Therefore, I've written many commands and their explanation explicitly but have not elaborated much on code snippets (like bash scripts etc).
+I also assume that you are like me and know something about programming but not too much about Linux. Therefore, I've written many commands and their explanation explicitly but have not elaborated much on code snippets (like bash scripts etc).
+
+Finally, as per unwritten Arch linux community rules apparently these tips/guides should not exists in the first place so do not read this. These are my own personal notes.
+
 
 ## Basic commands needed
 
 There are few stuff that gets done repeatedly in Arch. I write these down as a reference. 
+
+TODO: launching services.
+
+### Systemctl
+
+Few useful commands are:
+
+Check status of running services:
+```
+systemctl status
+```
+
+Start/stop new services
+```
+systemctl start <service_name>
+```
 
 
 
@@ -35,12 +54,9 @@ System clock is quite stable and robust so I don't see any point launching a dae
 
 ## wifi
 
-For wifi you have to options:
-netctl
-NetworkManager
+For wifi you have to options: `netctl` or `NetworkManager`. Both are relatively easy to use BUT do not work if they are both running simultaneously. Pick one.
 
-Both are relatively easy to use BUT do not work if they are both running simultaneously. Pick one.
-
+TODO: write how to save wlan configurations and autoconnect.
 
 ## Tiling window manager awesome
 
@@ -48,18 +64,29 @@ Tiling window managers are the best. I installed Awesome to my Arch.
 
 Process is relatively straightforward but to get transparency also working you need these packages:
 
+```
 xcompmgr
 transset-df
 awesome
+```
 
+In addition, the xinitrc needs to be modified.
 TODO: xinit mods
+TODO: modified rc.lua
+
+
+### automatic window opening & setup
+
+read awesome documentation
 
 
 ## terminal
 
 A good and flexible terminal is a must. Many recommend:
 
+```
 rxvt-unicode
+```
 
 In order to make it look pretty I modified .Xresoures as
 
@@ -71,16 +98,19 @@ TODO: add xresources mods
 Audio needs the sof firmware driver.
 TODO: add correct package.
 
-To set and modify the audio levels install also
-
+To set and modify the audio levels install also:
+```
 alsa-utils
+```
 
 These tweaks recommended in some manual where no longer needed but might depend on how up-to-date your BIOS is:
 
+```
 %etc/pulse/default.pa:
 
 module-load module-alsa-sink hw:0,0 channels=4
 module-load module-alsa-source hw:0,6 channels=4
+```
 
 Set Speaker to Mute to remove hollow/thin sound in alsamixer.
 TODO: make it stick
@@ -103,18 +133,16 @@ acpid
 enabled it to systemctl
 
 try with live capturing:
+```
 journalctl -f 
+```
 
-add event handler script to:
-/etc/acpi/handler.sh
-
-and restart acpi.service / boot machine
+add event handler script to `/etc/acpi/handler.sh` and restart acpi.service / boot machine.
 
 for brightness control need to add user to video grop
-
+```
 % /etc/udev/rules.d/backlight.rules
 
-```
 ACTION=="add", SUBSYSTEM=="backlight", KERNEL=="intel_backlight", RUN+="/bin/chgrp video /sys/class/backlight/%k/brightness"
 ACTION=="add", SUBSYSTEM=="backlight", KERNEL=="intel_backlight", RUN+="/bin/chmod g+w /sys/class/backlight/%k/brightness"
 ```
@@ -132,7 +160,4 @@ after this you have permission to change bl_dev and fn+f5/f6 should work.
 
 rclone?
 
-## automatic window opening & setup
-
-read awesome documentation
 
