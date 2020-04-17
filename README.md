@@ -52,7 +52,7 @@ System clock is quite stable and robust so I don't see any point launching a dae
 
 ## wifi
 
-For wifi you have to options: `netctl` or `NetworkManager`. Both are relatively easy to use BUT do not work if they are both running simultaneously. Pick one.
+For wifi you have two options: `netctl` or `NetworkManager`. Both are relatively easy to use BUT do not work if they are both running simultaneously. Pick one.
 
 TODO: write how to save wlan configurations and autoconnect.
 
@@ -63,49 +63,14 @@ A good and flexible terminal is a must. Many recommend `rxvt-unicode`.
 
 A reasonable terminal font is the hand-groomed hack (install with pkg `ttf-hack`).
 
-To load these with reasonable colors, we can modify the `.Xresources` as
+To load these we can modify the `.Xresources` as
 
 ```
 ! fix HiDpi scaling 
 Xft.dpi: 192
 
-*background: #2f343f
-*foreground: #d7d7d7
-*cursorColor: #c7c7c7
-*highlightTextColor: #383c4a
-*highlightColor: #c1ddff
+! TODO: define basic colors
 
-! black
-*.color0: #383c4a
-*.color8: #383c4a
-
-! red
-*.color1: #e28d9d
-*.color9: #e28d9d
-
-! green
-*.color2:  #bfd888
-*.color10: #bfd888
- 
-! yellow
-*.color3:  #df936c
-*.color11: #df936c
-
-! blue
-*.color4:  #5294e2
-*.color12: #5294e2
-
-! magenta
-*.color5:  #f74771
-*.color13: #f74771
-
-! cyan
-*.color6:  #7c818c
-*.color14: #7c818c
-
-! white
-*.color7: #d7d7d7
-*.color15: #d7d7d7
 
 urxvt*scrollBar: False
 
@@ -122,6 +87,20 @@ URxvt.letterSpace: 0
 
 ```
 
+## Login prompt
+
+Login greeter can be tweaked to include the username by adding the `-o` option to agetty. Additionally, it seems reasonable to put a 1s delay into it since otherwise the intel microcode will dump some garbage on the screen.
+
+Create a file `/etc/systemd/system/getty@tt1.service.d/override.conf` with content:
+
+```
+[Service]
+ExecStart=
+ExecStart=-/usr/bin/agetty -n --delay 1 -o USERNAME %I
+TTYVTDisallocate=no
+```
+
+Replace `USERNAME` with your own.
 
 ## audio
 
@@ -284,6 +263,38 @@ TODO: is it needed? Seems to work fine without.
 
 ### automatic window opening & setup
 
-TODO: read awesome documentation
+TODO: copy rc.lua part
+
+apps:
+firefox
+slack
+skype
+few terminals
+
+sys stuff:
+dropbox
+toggl
+
+
+
+
+## Misc:
+
+install:
+done: email -> web
+done: whatsapp -> web
+done: spotify -> web
+done: latex
+
+
+TODO: modify default window positions to have 2/3 ratios.
+TODO: password storing
+TODO: terminal does not always update
+TODO: reasonable `bashrc`
+TODO: only make terminal transparent
+TODO: proper folder viewer 
+TODO: open script to open every file type
+
+
 
 
