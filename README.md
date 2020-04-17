@@ -8,12 +8,12 @@ Finally, as per unwritten Arch linux community rules apparently these tips/guide
 
 
 
-## Basic commands needed
+## basic commands needed
 
 There are few stuff that gets done repeatedly in Arch. I write these down as a reference. 
 
 
-### Systemctl
+### systemctl
 
 Few useful commands are:
 
@@ -87,7 +87,7 @@ URxvt.letterSpace: 0
 
 ```
 
-## Login prompt
+## login prompt
 
 Login greeter can be tweaked to include the username by adding the `-o` option to agetty. Additionally, it seems reasonable to put a 1s delay into it since otherwise the intel microcode will dump some garbage on the screen.
 
@@ -125,9 +125,9 @@ Set Speaker to Mute to remove hollow/thin sound in alsamixer.
 TODO: make it stick
 
 
-## Keyboard 
+## keyboard 
 
-### Thinkpad keyboard shortcuts
+### thinkpad keyboard shortcuts
 
 In order to get the thinkpad extra keyboard keys working the running kernel needs to be updated with the thinkpad_acpi module.
 
@@ -149,7 +149,7 @@ Button action can be configured by modifying an event handler script at `/etc/ac
 My script is at the bottom of this section.
 
 
-### Brigthness controls
+### brigthness controls
 
 You can check the current brigthness with:
 ```
@@ -216,7 +216,7 @@ esac
 ```
 
 
-### Typomatic keyboard tweaks
+### typomatic keyboard tweaks
 
 Disable capslock 
 
@@ -231,7 +231,7 @@ xset r rate 225 33
 ```
 
 
-## Tiling window manager Awesome
+## tiling window manager Awesome
 
 Tiling window managers are the best. I installed Awesome to my Arch. 
 
@@ -243,39 +243,47 @@ transset-df
 awesome
 ```
 
-In addition, the xinitrc needs to be modified.
+In addition, the `.xinitrc` needs to be modified. Add these lines to the **end** of the file:
 
-TODO: xinitrc mods
+```
+exec xcompmgr -c &
 
-TODO: modified rc.lua
+exec awesome
+```
+
+
+### Automatic window opening & setup
+
+Add these to the end of the `.config/awesome/rc.lua` to automatically load some apps at startup
+
+```
+-- background apps
+awful.spawn.once("dropbox")
+awful.spawn.once("TogglDesktop", {minimized = true} )
+
+-- make tag 2 ready with 3 terminals
+awful.spawn(terminal, { screen = 1, tag = "2", focus = false} )
+awful.spawn(terminal, { screen = 1, tag = "2", focus = false} )
+awful.spawn(terminal, { screen = 1, tag = "2", focus = false} )
+
+-- autostart common apps
+awful.spawn.once("slack",   { screen = 1, tag = screen[1].tags[9], maximized = true, focus = false} )
+awful.spawn.once("firefox", { screen = 1, tag = screen[1].tags[1], maximized = true, } )
+```
+
+Change tags and screen as necessary.
 
 
 
 # Work in Progress:
 
-## bootctl
-
-TODO: write modifications of what I did
-
 ## throttled
 
 TODO: is it needed? Seems to work fine without.
 
-### automatic window opening & setup
+## sleep/hibernation
 
-TODO: copy rc.lua part
-
-apps:
-firefox
-slack
-skype
-few terminals
-
-sys stuff:
-dropbox
-toggl
-
-
+TODO: there is no sleep by default, however power consumption is quite low at idle so not very urgent
 
 
 ## Misc:
