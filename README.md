@@ -1,17 +1,14 @@
 # Configuring Arch Linux on Thinkpad X1 Carbon Gen7
 
-For installation notes check installation guide e.g. on [X1C6](https://github.com/ejmg/an-idiots-guide-to-installing-arch-on-a-lenovo-carbon-x1-gen-6). These notes focus on configuring the OS to work with X1C7 and assume that you have already succesfully installed the basic Arch Linux distribution.
+For installation notes check installation guide e.g. on [X1C6](https://github.com/ejmg/an-idiots-guide-to-installing-arch-on-a-lenovo-carbon-x1-gen-6). These notes focus on configuring the OS to work with X1C7 and assume that you have already successfully installed the basic Arch Linux distribution.
 
-I also assume that you are like me and know something about programming but not too much about Linux. Therefore, I've written many commands and their explanation explicitly but have not elaborated much on code snippets (like bash scripts etc).
-
-Finally, as per unwritten Arch linux community rules apparently these tips/guides should not exists in the first place so do not read this. These are my own personal notes.
+Finally, as per unwritten Arch Linux community rules apparently these tips/guides should not exists in the first place so do not read this. These are my own personal notes.
 
 
 
 ## basic commands needed
 
 There are few stuff that gets done repeatedly in Arch. I write these down as a reference. 
-
 
 ### systemctl
 
@@ -26,6 +23,26 @@ Start/stop new services
 ```
 systemctl start <service_name>
 ```
+
+### installing from AUR
+
+Sooner or later some package is missing and needs to be installed from AUR instead. There are many tools to automate this but the compilation and dependency checking is automated well enough so that only a few steps are needed anyway. Therefore, I prefer to do this by hand as follows.
+
+Create e.g. a `~/pkg` directory and git clone the pkg repo
+```
+git clone address
+```
+then compile and check dependencies
+```
+makepkg -s 
+```
+As an annoying feature sometimes the PGP key is missing. If you want to live dangerously and proceed anyway you can add `--skippgpcheck` option to skip the check.
+
+Then install the new package
+```
+makepkg -i
+```
+that corresponds to `pacman -U pkgname`
 
 
 ## time
@@ -69,8 +86,7 @@ To load these we can modify the `.Xresources` as
 ! fix HiDpi scaling 
 Xft.dpi: 192
 
-! TODO: define basic colors
-
+! TODO: define basic colors here< whatever you like
 
 urxvt*scrollBar: False
 
@@ -89,7 +105,7 @@ URxvt.letterSpace: 0
 
 ## login prompt
 
-Login greeter can be tweaked to include the username by adding the `-o` option to agetty. Additionally, it seems reasonable to put a 1s delay into it since otherwise the intel microcode will dump some garbage on the screen.
+Login greeter can be tweaked to include the username by adding the `-o` option to `agetty`. Additionally, it seems reasonable to put a 1s delay into it since otherwise the intel microcode will dump some garbage on the screen.
 
 Create a file `/etc/systemd/system/getty@tt1.service.d/override.conf` with content:
 
@@ -105,15 +121,17 @@ Replace `USERNAME` with your own.
 ## audio
 
 Audio needs the sof firmware driver.
+
 TODO: add correct package.
+
+TODO: pulse audio is actually also needed
 
 To set and modify the audio levels install also:
 ```
 alsa-utils
 ```
 
-These tweaks recommended in some manual where no longer needed but might depend on how up-to-date your BIOS is:
-
+In addition, we need to tell the pulse audio library to use the new sof drivers. Add this file
 ```
 %etc/pulse/default.pa:
 
@@ -122,6 +140,7 @@ module-load module-alsa-source hw:0,6 channels=4
 ```
 
 Set Speaker to Mute to remove hollow/thin sound in alsamixer.
+
 TODO: make it stick
 
 
@@ -274,6 +293,17 @@ awful.spawn.once("firefox", { screen = 1, tag = screen[1].tags[1], maximized = t
 Change tags and screen as necessary.
 
 
+## misc apps that work well in browser:
+
+Many apps work well in browser (some in `firefox`, some in `chromium`).
+
+- email -> gmail
+- whatsapp -> whatsapp web
+- spotify -> web.spotify
+
+
+----
+
 
 # Work in Progress:
 
@@ -285,15 +315,15 @@ TODO: is it needed? Seems to work fine without.
 
 TODO: there is no sleep by default, however power consumption is quite low at idle so not very urgent
 
+## bluethooth
 
-## Misc:
+TODO: write down
 
-install:
-done: email -> web
-done: whatsapp -> web
-done: spotify -> web
-done: latex
+blueman?
 
+
+
+## TODO / missing
 
 TODO: modify default window positions to have 2/3 ratios.
 TODO: password storing
@@ -302,6 +332,22 @@ TODO: reasonable `bashrc`
 TODO: only make terminal transparent
 TODO: proper folder viewer 
 TODO: open script to open every file type
+
+
+
+----
+
+# Appendix
+
+## boot into live iso
+
+When all goes wrong you can always boot and debug by using the live iso USB.
+
+TODO: describe these in more detail:
+
+- boot live iso
+- mount partitions
+- chroot into your system
 
 
 
