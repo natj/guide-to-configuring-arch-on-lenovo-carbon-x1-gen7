@@ -68,10 +68,17 @@ System clock is quite stable and robust so I don't see any point launching a dae
 
 
 ## wifi
-
+s
 For wifi you have two options: `netctl` or `NetworkManager`. Both are relatively easy to use BUT do not work if they are both running simultaneously. Pick one.
 
 TODO: write how to save wlan configurations and autoconnect.
+
+## intel gpu
+
+TODO: `intel_agp`  and `i915`
+
+https://wiki.archlinux.org/index.php/intel_graphics
+https://bbs.archlinux.org/viewtopic.php?id=127953
 
 
 ## terminal
@@ -168,7 +175,7 @@ Button action can be configured by modifying an event handler script at `/etc/ac
 My script is at the bottom of this section.
 
 
-### brigthness controls
+### display brigthness controls
 
 You can check the current brigthness with:
 ```
@@ -190,12 +197,25 @@ ACTION=="add", SUBSYSTEM=="backlight", KERNEL=="intel_backlight", RUN+="/bin/chg
 ACTION=="add", SUBSYSTEM=="backlight", KERNEL=="intel_backlight", RUN+="/bin/chmod g+w /sys/class/backlight/%k/brightness"
 ```
 
+Ref: [wiki/backlight](https://wiki.archlinux.org/index.php/Backlight)
+
+
 then
 ```
 sudo usermod -aG <user>
 ```
 
 after this you have permission to change `bl_dev` and fn+f5/f6 should work.
+
+### clipboard and copy-pasting
+
+Copypasting with `neovim` and `urxvt` is weird. It works if you add
+```
+set clipboard=unnamedplus
+```
+to vim config (`~/.config/nvim/init.vim` for `neovim`). Importantly, after this the X clipboard can be accessed with `shift`+`mouse-middle-button`.
+
+
 
 ### Event handler script `handler.sh`
 
@@ -293,6 +313,12 @@ awful.spawn.once("firefox", { screen = 1, tag = screen[1].tags[1], maximized = t
 Change tags and screen as necessary.
 
 
+## openssh
+
+Default ssh app from the public `openssh` package does not support kerberos tickets that need gssapi key exchange support. Instead, one needs to manually install `openssh-gssapi` from the AUR.
+
+
+
 ## misc apps that work well in browser:
 
 Many apps work well in browser (some in `firefox`, some in `chromium`).
@@ -307,6 +333,85 @@ Many apps work well in browser (some in `firefox`, some in `chromium`).
 
 # Work in Progress:
 
+## fingerprint reader
+
+Packages we need:
+```
+fwupdmgr
+usbutils
+fprintd
+imagemagic
+```
+ 
+First, let's check the status of the firmware with:
+```
+fwupdmgr get-devices
+```
+
+Check that you have:
+```
+├─Prometheus:
+│ │   Summary:             Fingerprint reader
+│ │   Current version:     10.02.3110269
+│ │   Vendor:              Synaptics (USB:0x06CB)
+│ │ 
+│ └─Prometheus IOTA Config:
+│       Current version:   0022
+│       Minimum Version:   0022
+│       Vendor:            Synaptics (USB:0x06CB)
+```
+with at least version 10.02 for Prometheus and 0022 for Prometheys IOTA config drivers.
+
+If not, we need to update it from the lvfs-testing repository (i.e. not stable updates). Enable lvfs testing with:
+```
+sudo fwupdmgr enable-remote lvfs-testing
+```
+then use fwupdmgr to refresh the driver list, download updates, and update:
+```
+fwupdmgr refresh
+fwupdmgr get-updates
+fwupdmgr update
+```
+
+Now we can proceed to the actual `fprint` installation with pacman, as usual.
+
+After that you might want to remove the testing branch remote with
+```
+sudo fwupdmgr disable-remote lvfs-testing
+```
+because pushing unstable firmware BIOS drivers to your machine might not be the best idea.
+
+
+Next we need to setup fingerprints and enable login. Run
+```
+fprintd-enroll
+```
+and give your right index finger (or whatever) as many times as the application wants (8 times for me)
+
+After this the print should appear in `/var/lib/fprint/USER/synaptics`. You can check that it works with
+```
+fprintd-verify -f right-index USER
+Using device /net/reactivated/Fprint/Device/0
+Listing enrolled fingers:
+ - #0: right-index-finger
+Verify result: verify-match (done)
+```
+
+Finally, we can put that fingerprint reader to good use by enabling it as a sufficient local login authentication method. Modify `/etc/pam.d/system-local-login` as:
+
+```
+auth		sufficient	pam_fprintd.so
+```
+by inserting this to the top of the list.
+
+Similarly, one could edit `/etc/pam.d/sudo`. However, not sure if this is wise.
+
+By using the `sufficient` optoin the reader will ask for the index finger 3 times and if failed it will open the password box as normal.
+
+
+Ref [wiki/fprint](https://wiki.archlinux.org/index.php/Fprint)
+Ref [blog1](https://curryncode.com/2018/11/27/using-the-fingerprint-reader-to-unlock-arch-linux/)
+
 ## throttled
 
 TODO: is it needed? Seems to work fine without.
@@ -315,22 +420,36 @@ TODO: is it needed? Seems to work fine without.
 
 TODO: there is no sleep by default, however power consumption is quite low at idle so not very urgent
 
+TODO: check `i3lock` for screen lock
+
 ## bluethooth
 
 TODO: write down
 
-blueman?
+`blueman`?
+
+## disk usage
+
+https://github.com/amanusk/s-tui
+https://gitlab.freedesktop.org/drm/igt-gpu-tools
+https://www.archlinux.org/packages/community/x86_64/powertop/
 
 
 
 ## TODO / missing
 
 TODO: modify default window positions to have 2/3 ratios.
+
 TODO: password storing
+
 TODO: terminal does not always update
+
 TODO: reasonable `bashrc`
+
 TODO: only make terminal transparent
+
 TODO: proper folder viewer 
+
 TODO: open script to open every file type
 
 
