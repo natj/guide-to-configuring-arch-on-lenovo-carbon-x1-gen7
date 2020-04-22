@@ -150,6 +150,18 @@ Set Speaker to Mute to remove hollow/thin sound in alsamixer.
 
 TODO: make it stick
 
+### Remove and blacklist PC speaker
+
+I find it nice to remove the internal PC speaker from beeping. Do
+```
+sudo rmmod pcspkr
+```
+to test the eerie silence. Then make it permanent by blacklisting the module from being loaded by udev with
+
+```
+echo "blacklist pcspkr" > /etc/modprobe.d/nobeep.conf
+```
+
 
 ## keyboard 
 
@@ -318,21 +330,6 @@ Change tags and screen as necessary.
 Default ssh app from the public `openssh` package does not support kerberos tickets that need gssapi key exchange support. Instead, one needs to manually install `openssh-gssapi` from the AUR.
 
 
-
-## misc apps that work well in browser:
-
-Many apps work well in browser (some in `firefox`, some in `chromium`).
-
-- email -> gmail
-- whatsapp -> whatsapp web
-- spotify -> web.spotify
-
-
-----
-
-
-# Work in Progress:
-
 ## fingerprint reader
 
 Packages we need:
@@ -409,8 +406,183 @@ Similarly, one could edit `/etc/pam.d/sudo`. However, not sure if this is wise.
 By using the `sufficient` optoin the reader will ask for the index finger 3 times and if failed it will open the password box as normal.
 
 
-Ref [wiki/fprint](https://wiki.archlinux.org/index.php/Fprint)
-Ref [blog1](https://curryncode.com/2018/11/27/using-the-fingerprint-reader-to-unlock-arch-linux/)
+Refs:
+
+- [wiki/fprint](https://wiki.archlinux.org/index.php/Fprint)
+- [blog1](https://curryncode.com/2018/11/27/using-the-fingerprint-reader-to-unlock-arch-linux/)
+
+
+## bluetooth
+
+Packages needed:
+```
+bluez
+bluez-utils
+pulseaudio-bluetooth
+blueman
+bluez-hid2hci
+```
+
+Begin by checking that bluetooth module is loaded to kernel:
+```
+modinfo btusb
+```
+and see that you get output.
+
+```
+systemctl enable bluetooth.service
+```
+
+next, add user to lp group to get acces to bl devices
+group for acces to parallel port devices (printers and others)
+
+display current groups
+```
+groups user
+gpasswd -a user group
+```
+
+### checking device status
+
+Now we are ready to start tweaking.
+
+tried this package for thinkpad:
+bluez-hid2hci
+
+There seems to be also a hardware-based on-off switch. Check its status with:
+```
+rfkill list
+```
+that shows status of wireless devices.
+Then press Fn=F10 (bluetooth symbol) and try again. Soft blocked should turn from yes to no or vice versa.
+
+Same info is available from
+```
+cat /proc/acpi/ibm/bluetooth 
+status:		enabled
+commands:	enable, disable
+```
+
+and is controllable from 
+```
+cat /sys/devices/platform/thinkpad_acpi/bluetooth_enable 
+```
+by inserting `0` or `1` to the file.
+
+
+### debugging bluetooth device and service
+
+test bluetooth device with `bluetoothctl` that is part of the `bluez` package.
+
+Then inside the cli app try these commands:
+```
+show
+power on
+scan on
+pair MAC_ADDRESS
+connect MAC_ADDRESS
+```
+NOTE: blueman automates all of this so not really needed in real life usage scenario.
+
+Apparantly, a better way to debug this is by first stoppign the service
+```
+systemctl stop bluetooth
+```
+and then loading it manually
+TODO: with or without sudo?
+```
+/usr/lib/bluetoothd -n -d
+```
+and checking the output.
+
+
+another tool is the 
+```
+btmgmt
+```
+with comands
+```
+info
+select hci0
+power on
+```
+
+
+### removing wifi & bluetooth interference settings
+
+/etc/modprobe.d/iwlwifi.conf
+add
+options iwlwifi bt_coex_active=0
+
+
+### actual usage with `blueman`
+
+Finally, you can easily pair and connect to devices by launching
+```
+blueman-applet
+```
+
+Refs:
+
+- [wiki/bluetooth](https://wiki.archlinux.org/index.php/bluetooth)
+- [wiki/blueman](https://wiki.archlinux.org/index.php/Blueman)
+- [wiki/bluetooth_headset](https://wiki.archlinux.org/index.php/Bluetooth_headset)
+
+https://200ok.ch/posts/2018-12-17_making_bluetooth_work_on_lenovo_x1_carbon_6th_gen_with_linux.html
+http://www.thinkwiki.org/wiki/How_to_setup_Bluetooth
+https://askubuntu.com/questions/180744/how-to-enable-hard-blocked-bluetooth-in-thinkpad-edge-320
+
+
+### delay bluetooth powering from restart
+
+Create the file /etc/systemd/system/bluetooth-poweron.service as root and put the following code into it :
+
+[Unit]
+Description=Bluetooth Power Fix
+After=bluetooth.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/bluetoothctl -- power on
+Restart=always
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target
+
+then run systemctl enable bluetooth-poweron
+
+
+
+### Old appendix:
+
+Modify `/etc/pulse/default.pa`
+```
+load-module bluetooth-xx
+load-module bluetooth-yy
+
+### auto switch on connect
+load-module module-switch-on-connect
+```
+
+NOTE: `blueman-applet` does pulseaudio switching automatically.
+
+
+
+## misc apps that work well in browser:
+
+Many apps work well in browser (some in `firefox`, some in `chromium`).
+
+- email -> gmail
+- whatsapp -> whatsapp web
+- spotify -> web.spotify
+
+
+----
+
+
+# Work in Progress:
+
 
 ## throttled
 
@@ -422,17 +594,19 @@ TODO: there is no sleep by default, however power consumption is quite low at id
 
 TODO: check `i3lock` for screen lock
 
-## bluethooth
-
-TODO: write down
-
-`blueman`?
 
 ## disk usage
 
 https://github.com/amanusk/s-tui
 https://gitlab.freedesktop.org/drm/igt-gpu-tools
 https://www.archlinux.org/packages/community/x86_64/powertop/
+
+## thinkpad hw controls
+
+tpacpi controls are in directory:
+```
+/sys/devices/platform/thinkpad_acpi
+```
 
 
 
