@@ -627,6 +627,41 @@ TODO: proper folder viewer
 TODO: open script to open every file type
 
 
+## kernel compilation
+
+Some generla notes about kernel compilation.
+
+### initial ramdisk
+
+"Initial ramdisk is in essence a very small environment (early userspace) which loads various kernel modules and sets up necessary things before handing over control to `init`." - wiki/mkinitcpio
+
+First an initial ramdisk image is created with
+```
+mkinitcpio
+```
+This creates both the `default` (optimized) image and a `fallback` image (that skips autodetect hook of drivers and embeds everything into the image just in case).
+
+
+TODO:
+
+There might be messages during compile time about missing firmware:
+```
+aic94xx
+wd719x
+```
+see https://wiki.archlinux.org/index.php/Mkinitcpio#Possibly_missing_firmware_for_module_XXXX
+
+These appear harmless as they are both some HDD/RAID drivers.
+
+TODO:
+
+warning: /etc/fwupd/remotes.d/lvfs-testing.conf installed as /etc/fwupd/remotes.d/lvfs-testing.conf.pacnew
+warning: /etc/fwupd/remotes.d/lvfs.conf installed as /etc/fwupd/remotes.d/lvfs.conf.pacnew
+
+
+Configuration is in `/etc/mkinitcpio.conf`
+
+
 
 ----
 
