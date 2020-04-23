@@ -60,7 +60,9 @@ sudo hwclock --systohc
 ```
 
 you can then check that everything went ok by looking
+```
 timedatectl status
+```
 
 that should show correct timezone and correct localtime.
 
@@ -68,7 +70,7 @@ System clock is quite stable and robust so I don't see any point launching a dae
 
 
 ## wifi
-s
+
 For wifi you have two options: `netctl` or `NetworkManager`. Both are relatively easy to use BUT do not work if they are both running simultaneously. Pick one.
 
 TODO: write how to save wlan configurations and autoconnect.
@@ -77,8 +79,10 @@ TODO: write how to save wlan configurations and autoconnect.
 
 TODO: `intel_agp`  and `i915`
 
-https://wiki.archlinux.org/index.php/intel_graphics
-https://bbs.archlinux.org/viewtopic.php?id=127953
+Refs:
+
+- https://wiki.archlinux.org/index.php/intel_graphics
+- https://bbs.archlinux.org/viewtopic.php?id=127953
 
 
 ## terminal
@@ -107,7 +111,6 @@ URxvt.font:       xft:Hack-Regular:pixelsize=22
 URxvt.boldFont:   xft:Hack-Bold:pixelsize=22
 URxvt.italicFont: xft:Hack-RegularOblique:pixelsize=22:slant=italic
 URxvt.letterSpace: 0
-
 ```
 
 ## login prompt
@@ -138,10 +141,8 @@ To set and modify the audio levels install also:
 alsa-utils
 ```
 
-In addition, we need to tell the pulse audio library to use the new sof drivers. Add this file
+In addition, we need to tell the pulse audio library to use the new sof drivers. Add this file `etc/pulse/default.pa`:
 ```
-%etc/pulse/default.pa:
-
 module-load module-alsa-sink hw:0,0 channels=4
 module-load module-alsa-source hw:0,6 channels=4
 ```
@@ -167,14 +168,13 @@ echo "blacklist pcspkr" > /etc/modprobe.d/nobeep.conf
 
 ### thinkpad keyboard shortcuts
 
-In order to get the thinkpad extra keyboard keys working the running kernel needs to be updated with the thinkpad_acpi module.
+In order to get the thinkpad extra keyboard keys working the running kernel needs to be updated with the `thinkpad_acpi` module.
 
 TODO: Add installation notes
 
-
 Next we need a script that listens to keypresses, captures them and lets us perform stuff based on them.
 
-Install `acpid` for that. Enabled it to systemctl.
+Install `acpid` for that. Enabled it to `systemctl`.
 
 Try with live capturing:
 ```
@@ -209,7 +209,9 @@ ACTION=="add", SUBSYSTEM=="backlight", KERNEL=="intel_backlight", RUN+="/bin/chg
 ACTION=="add", SUBSYSTEM=="backlight", KERNEL=="intel_backlight", RUN+="/bin/chmod g+w /sys/class/backlight/%k/brightness"
 ```
 
-Ref: [wiki/backlight](https://wiki.archlinux.org/index.php/Backlight)
+Ref: 
+
+- https://wiki.archlinux.org/index.php/Backlight
 
 
 then
@@ -282,7 +284,7 @@ xset r rate 225 33
 ```
 
 
-## tiling window manager Awesome
+## OPTIONAL: tiling window manager Awesome
 
 Tiling window managers are the best. I installed Awesome to my Arch. 
 
@@ -408,8 +410,8 @@ By using the `sufficient` optoin the reader will ask for the index finger 3 time
 
 Refs:
 
-- [wiki/fprint](https://wiki.archlinux.org/index.php/Fprint)
-- [blog1](https://curryncode.com/2018/11/27/using-the-fingerprint-reader-to-unlock-arch-linux/)
+- https://wiki.archlinux.org/index.php/Fprint
+- https://curryncode.com/2018/11/27/using-the-fingerprint-reader-to-unlock-arch-linux/
 
 
 ## bluetooth
@@ -446,15 +448,21 @@ gpasswd -a user group
 
 Now we are ready to start tweaking.
 
-tried this package for thinkpad:
+tried installing this package for thinkpad:
+```
 bluez-hid2hci
+```
+and it seems to work.
+
+TODO: confirm bluetooth functionality
+
 
 There seems to be also a hardware-based on-off switch. Check its status with:
 ```
 rfkill list
 ```
 that shows status of wireless devices.
-Then press Fn=F10 (bluetooth symbol) and try again. Soft blocked should turn from yes to no or vice versa.
+Then press `Fn`+`F10` (bluetooth symbol) and try again. Soft blocked should turn from yes to no or vice versa.
 
 Same info is available from
 ```
@@ -462,7 +470,6 @@ cat /proc/acpi/ibm/bluetooth
 status:		enabled
 commands:	enable, disable
 ```
-
 and is controllable from 
 ```
 cat /sys/devices/platform/thinkpad_acpi/bluetooth_enable 
@@ -489,18 +496,14 @@ Apparantly, a better way to debug this is by first stoppign the service
 systemctl stop bluetooth
 ```
 and then loading it manually
-TODO: with or without sudo?
 ```
 /usr/lib/bluetoothd -n -d
 ```
 and checking the output.
 
+TODO: with or without sudo?
 
-another tool is the 
-```
-btmgmt
-```
-with comands
+Another tool is the `btmgmt` with commands:
 ```
 info
 select hci0
@@ -510,10 +513,10 @@ power on
 
 ### removing wifi & bluetooth interference settings
 
-/etc/modprobe.d/iwlwifi.conf
-add
+To `/etc/modprobe.d/iwlwifi.conf` add
+```
 options iwlwifi bt_coex_active=0
-
+```
 
 ### actual usage with `blueman`
 
@@ -524,19 +527,19 @@ blueman-applet
 
 Refs:
 
-- [wiki/bluetooth](https://wiki.archlinux.org/index.php/bluetooth)
-- [wiki/blueman](https://wiki.archlinux.org/index.php/Blueman)
-- [wiki/bluetooth_headset](https://wiki.archlinux.org/index.php/Bluetooth_headset)
-
-https://200ok.ch/posts/2018-12-17_making_bluetooth_work_on_lenovo_x1_carbon_6th_gen_with_linux.html
-http://www.thinkwiki.org/wiki/How_to_setup_Bluetooth
-https://askubuntu.com/questions/180744/how-to-enable-hard-blocked-bluetooth-in-thinkpad-edge-320
+- https://wiki.archlinux.org/index.php/bluetooth
+- https://wiki.archlinux.org/index.php/Blueman
+- https://wiki.archlinux.org/index.php/Bluetooth_headset
+- https://200ok.ch/posts/2018-12-17_making_bluetooth_work_on_lenovo_x1_carbon_6th_gen_with_linux.html
+- http://www.thinkwiki.org/wiki/How_to_setup_Bluetooth
+- https://askubuntu.com/questions/180744/how-to-enable-hard-blocked-bluetooth-in-thinkpad-edge-320
 
 
 ### delay bluetooth powering from restart
 
-Create the file /etc/systemd/system/bluetooth-poweron.service as root and put the following code into it :
+Create the file `/etc/systemd/system/bluetooth-poweron.service` as root and put the following code into it:
 
+```
 [Unit]
 Description=Bluetooth Power Fix
 After=bluetooth.target
@@ -549,9 +552,8 @@ RestartSec=5s
 
 [Install]
 WantedBy=multi-user.target
-
-then run systemctl enable bluetooth-poweron
-
+```
+then run `systemctl enable bluetooth-poweron`
 
 
 ### Old appendix:
@@ -560,13 +562,34 @@ Modify `/etc/pulse/default.pa`
 ```
 load-module bluetooth-xx
 load-module bluetooth-yy
+```
 
 ### auto switch on connect
+
+Modify `/etc/pulse/default.pa`
+```
 load-module module-switch-on-connect
 ```
 
-NOTE: `blueman-applet` does pulseaudio switching automatically.
+NOTE: `blueman-applet` does pulseaudio switching automatically. These modules seem to be **NOT** needed.
 
+
+## keyring
+
+TODO: finish installation
+
+Keyring remembers your passwords for a while during the session. Install
+```
+libsecret
+gnome-keyring
+```
+for GUI add also `seahorse`.
+
+
+To add git to keyring, execute
+```
+git config --global credential.helper /usr/lib/git-core/git-credential-libsecret
+```
 
 
 ## misc apps that work well in browser:
@@ -578,10 +601,11 @@ Many apps work well in browser (some in `firefox`, some in `chromium`).
 - spotify -> web.spotify
 
 
+
 ----
 
 
-# Work in Progress:
+# Work in Progress / NOTES:
 
 
 ## throttled
@@ -593,7 +617,6 @@ TODO: is it needed? Seems to work fine without.
 TODO: there is no sleep by default, however power consumption is quite low at idle so not very urgent
 
 TODO: check `i3lock` for screen lock
-
 
 ## disk usage
 
@@ -608,9 +631,7 @@ tpacpi controls are in directory:
 /sys/devices/platform/thinkpad_acpi
 ```
 
-
-
-## TODO / missing
+## TODO / missing functionality list
 
 TODO: modify default window positions to have 2/3 ratios.
 
@@ -627,9 +648,26 @@ TODO: proper folder viewer
 TODO: open script to open every file type
 
 
+
+
+----
+
+# Appendix
+
+## boot into live iso
+
+When all goes wrong you can always boot and debug by using the live iso USB.
+
+TODO: describe these in more detail:
+
+- boot live iso
+- mount partitions
+- chroot into your system
+
+
 ## kernel compilation
 
-Some generla notes about kernel compilation.
+Some general notes about kernel compilation.
 
 ### initial ramdisk
 
@@ -660,23 +698,6 @@ warning: /etc/fwupd/remotes.d/lvfs.conf installed as /etc/fwupd/remotes.d/lvfs.c
 
 
 Configuration is in `/etc/mkinitcpio.conf`
-
-
-
-----
-
-# Appendix
-
-## boot into live iso
-
-When all goes wrong you can always boot and debug by using the live iso USB.
-
-TODO: describe these in more detail:
-
-- boot live iso
-- mount partitions
-- chroot into your system
-
 
 
 
