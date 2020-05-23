@@ -6,15 +6,16 @@ Finally, as per unwritten Arch Linux community rules apparently these tips/guide
 
 
 <!--ts-->
+   * [Configuring Arch Linux on Thinkpad X1 Carbon Gen7](#configuring-arch-linux-on-thinkpad-x1-carbon-gen7)
    * [Basic survival commands](#basic-survival-commands)
-      * [systemctl](#systemctl)
-      * [installing from AUR](#installing-from-aur)
-      * [AUR helpers](#aur-helpers)
+         * [systemctl](#systemctl)
+         * [installing from AUR](#installing-from-aur)
+         * [AUR helpers](#aur-helpers)
    * [Configuring](#configuring)
       * [time](#time)
       * [wifi](#wifi)
-      * [intel gpu](#intel-gpu)
       * [terminal](#terminal)
+         * [reasonable terminal default colors](#reasonable-terminal-default-colors)
       * [login prompt](#login-prompt)
       * [audio](#audio)
          * [Remove and blacklist PC speaker](#remove-and-blacklist-pc-speaker)
@@ -26,7 +27,7 @@ Finally, as per unwritten Arch Linux community rules apparently these tips/guide
          * [typomatic keyboard tweaks](#typomatic-keyboard-tweaks)
          * [TrackPoint configuration](#trackpoint-configuration)
       * [OPTIONAL: tiling window manager Awesome](#optional-tiling-window-manager-awesome)
-         * [Automatic window opening &amp; setup](#automatic-window-opening--setup)
+         * [automatic window opening](#automatic-window-opening)
       * [openssh](#openssh)
       * [fingerprint reader](#fingerprint-reader)
       * [bluetooth](#bluetooth)
@@ -35,13 +36,14 @@ Finally, as per unwritten Arch Linux community rules apparently these tips/guide
          * [removing wifi &amp; bluetooth interference settings](#removing-wifi--bluetooth-interference-settings)
          * [actual usage with blueman](#actual-usage-with-blueman)
          * [delay bluetooth powering from restart](#delay-bluetooth-powering-from-restart)
-         * [Old appendix:](#old-appendix)
+         * [pulse audio libraries](#pulse-audio-libraries)
          * [auto switch on connect](#auto-switch-on-connect)
-         * [airpods](#airpods)
+         * [apple airpods](#apple-airpods)
       * [keyring](#keyring)
+      * [power saving](#power-saving)
       * [misc apps that work well in browser:](#misc-apps-that-work-well-in-browser)
    * [Work in Progress / NOTES:](#work-in-progress--notes)
-      * [power saving](#power-saving)
+      * [intel gpu](#intel-gpu)
       * [throttled](#throttled)
       * [sleep/hibernation](#sleephibernation)
       * [disk usage](#disk-usage)
@@ -59,7 +61,7 @@ Finally, as per unwritten Arch Linux community rules apparently these tips/guide
          * [automatic mounting](#automatic-mounting)
          * [automated script usage](#automated-script-usage)
 
-<!-- Added by: natj, at: Sat 23 May 2020 10:49:54 AM EDT -->
+<!-- Added by: natj, at: Sat 23 May 2020 11:32:51 AM EDT -->
 
 <!--te-->
 
@@ -122,12 +124,12 @@ yay <Search Term> 	#Present package-installation selection menu.
 yay -Ps 	        #Print system statistics.
 yay -Yc 	        #Clean unneeded dependencies.
 yay -G <AUR pkg> 	#Download PKGBUILD from ABS or AUR.
-yay -Y --gendb 	    #Generate development package database used for devel update.
+yay -Y --gendb      #Generate development package database used for devel update.
 ```
 
 Once in a while it is good to run a full system update with:
 ```bash
-yay -Syu --devel --timeupdate 	Perform system upgrade, but also check for development package updates and use PKGBUILD modification time (not version number) to determine update.
+yay -Syu --devel --timeupdate 	#Perform system upgrade, but also check for development package updates and use PKGBUILD modification time (not version number) to determine update.
 ```
 
 
@@ -488,7 +490,7 @@ exec awesome
 Addendum: transparency causes issues with screen sharing with softwares like Zoom etc. I recommend not using it.
 
 
-### automatic window opening & setup
+### automatic window opening
 
 Add these to the end of the `.config/awesome/rc.lua` to automatically load some apps at startup
 
@@ -594,7 +596,6 @@ By using the `sufficient` option the reader will ask for the index finger 3 time
 
 
 Refs:
-
 - https://wiki.archlinux.org/index.php/Fprint
 - https://curryncode.com/2018/11/27/using-the-fingerprint-reader-to-unlock-arch-linux/
 
@@ -714,7 +715,6 @@ blueman-applet
 ```
 
 Refs:
-
 - https://wiki.archlinux.org/index.php/bluetooth
 - https://wiki.archlinux.org/index.php/Blueman
 - https://wiki.archlinux.org/index.php/Bluetooth_headset
@@ -770,7 +770,6 @@ NOTE: `blueman-applet` does pulseaudio switching automatically. These modules se
 TODO: Getting Apple AirPods to work seems the trickiest. Not working reliably atm.
 
 Refs:
-
 - https://c-command.com/toothfairy/manual
 - https://github.com/adolfintel/OpenPods/tree/master/OpenPods
 - https://askubuntu.com/questions/922860/pairing-apple-airpods-as-headset/1063582#1063582
