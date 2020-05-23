@@ -44,6 +44,21 @@ makepkg -i
 ```
 that corresponds to `pacman -U pkgname`
 
+### AUR helpers
+
+https://github.com/Jguer/yay
+
+```
+yay pkgname
+```
+
+yay <Search Term> 	Present package-installation selection menu.
+yay -Ps 	Print system statistics.
+yay -Yc 	Clean unneeded dependencies.
+yay -G <AUR Package> 	Download PKGBUILD from ABS or AUR.
+yay -Y --gendb 	Generate development package database used for devel update.
+yay -Syu --devel --timeupdate 	Perform system upgrade, but also check for development package updates and use PKGBUILD modification time (not version number) to determine update.
+
 
 ## time
 
@@ -83,6 +98,9 @@ Refs:
 
 - https://wiki.archlinux.org/index.php/intel_graphics
 - https://bbs.archlinux.org/viewtopic.php?id=127953
+
+https://gist.github.com/Brainiarc7/aa43570f512906e882ad6cdd835efe57
+
 
 
 ## terminal
@@ -147,9 +165,13 @@ module-load module-alsa-sink hw:0,0 channels=4
 module-load module-alsa-source hw:0,6 channels=4
 ```
 
-Set Speaker to Mute to remove hollow/thin sound in alsamixer.
+Set Speaker to Mute to remove hollow/thin sound in alsamixer. Do this at startup by adding to your `.xinitrc`
 
-TODO: make it stick
+```
+amixer -c 0 set Speaker mute
+```
+
+
 
 ### Remove and blacklist PC speaker
 
@@ -282,6 +304,36 @@ Increase typomatic delay by again adding to `.xinitrc`:
 ```
 xset r rate 225 33
 ```
+
+### TrackPoint configuration
+
+libinput by default
+
+other options
+evdev 
+mtrack
+
+usage:
+
+xinput --list
+xinput --list-props ID
+
+
+Insert slight acceleration to make it easier to go from one end of the screen to another:
+xinput --set-prop 15 'libinput Accel Speed' 0.1
+
+Alternatively, for detailed work, add negative acceleration
+xinput --set-prop 15 'libinput Accel Speed' -0.3
+
+
+Refs:
+
+https://wiki.archlinux.org/index.php/TrackPoint
+http://www.thinkwiki.org/wiki/How_to_configure_the_TrackPoint
+https://bill.harding.blog/2017/12/27/toward-a-linux-touchpad-as-smooth-as-macbook-pro/
+https://wayland.freedesktop.org/libinput/doc/1.10.7/trackpoints.html
+
+
 
 
 ## OPTIONAL: tiling window manager Awesome
@@ -573,6 +625,12 @@ load-module module-switch-on-connect
 
 NOTE: `blueman-applet` does pulseaudio switching automatically. These modules seem to be **NOT** needed.
 
+### airpods
+
+https://c-command.com/toothfairy/manual
+https://github.com/adolfintel/OpenPods/tree/master/OpenPods
+https://askubuntu.com/questions/922860/pairing-apple-airpods-as-headset/1063582#1063582
+
 
 ## keyring
 
@@ -607,6 +665,35 @@ Many apps work well in browser (some in `firefox`, some in `chromium`).
 
 # Work in Progress / NOTES:
 
+## power saving
+
+https://wiki.archlinux.org/index.php/Power_management
+https://www.reddit.com/r/archlinux/comments/2sq45s/any_helpfull_tweaks_for_thinkpads/
+http://www.thinkwiki.org/wiki/Tp_smapi
+https://linrunner.de/tlp/
+https://askubuntu.com/questions/34452/how-can-i-limit-battery-charging-to-80-capacity
+
+installed:
+```
+tpi
+tp_smapi #not needed; for older models
+acpi_call
+```
+
+systemctl enable tlp.service
+
+
+check status:
+tlp-stat
+
+And finally, add battery charge depletion 
+
+/etc/tlp.conf
+
+START_CHARGE_THRESH_BAT0=75
+STOP_CHARGE_THRESH_BAT0=80
+
+
 
 ## throttled
 
@@ -631,6 +718,23 @@ tpacpi controls are in directory:
 /sys/devices/platform/thinkpad_acpi
 ```
 
+## screenshots
+
+install `scrot`
+
+
+## mac files (incl. sparsebundles)
+
+https://github.com/torarnv/sparsebundlefs
+
+
+## OS helper
+
+https://github.com/qdore/Mutate
+https://albertlauncher.github.io/help/
+
+
+
 ## TODO / missing functionality list
 
 TODO: modify default window positions to have 2/3 ratios.
@@ -639,14 +743,21 @@ TODO: password storing
 
 TODO: terminal does not always update
 
-TODO: reasonable `bashrc`
-
-TODO: only make terminal transparent
-
 TODO: proper folder viewer 
 
 TODO: open script to open every file type
 
+TODO: OS helper: albert/mutate etc
+
+TODO: bluetooth + airpods
+
+TODO: battery charging & optimization (depletion prevention with 80% charge)
+
+TODO: awesome bar: squeeze battery text
+
+TODO: awesome bar: wifi bar
+
+TODO: awesome bar: toggl status
 
 
 
@@ -699,5 +810,139 @@ warning: /etc/fwupd/remotes.d/lvfs.conf installed as /etc/fwupd/remotes.d/lvfs.c
 
 Configuration is in `/etc/mkinitcpio.conf`
 
+
+### encrypting USB flash drives
+
+Almost directly copied from: https://zuttobenkyou.wordpress.com/2012/12/08/how-to-encrypt-your-usb-flash-drives/
+
+
+Find the correct device:
+```
+lsblk
+```
+ 
+Wipe the device with random data. 
+I prefer to target the disk by its UUID because using the `/dev/sdX` convention is not very reliable (the letters can change between boots/hotmounts). 
+
+NOTE: You might be interested in http://frandom.sourceforge.net/ if your device is over 16 GiB or so, because using `/dev/urandom` can be very slow. 
+If using Arch Linux, you can get it from the AUR: https://aur.archlinux.org/packages/frandom/.
+ 
+```
+dd if=/dev/urandom of=/dev/disk/by-uuid/XXX bs=4096
+```
+ 
+Create the partition on the device.
+ 
+```
+cfdisk /dev/disk/by-uuid/XXX
+```
+ 
+Encrypt the partition and make it LUKS-compatible. 
+See the manpage for cryptsetup:
+
+  -c: cipher type to use
+  -y: LUKS will ask you to input the passphrase; using -y will ask you twice
+      and complain if the two do not match.
+  -s: Key size in bits; the larger the merrier, but limited by the cipher/mode used.
+
+```
+cryptsetup -c aes-xts-plain -y -s 512 luksFormat /dev/disk/by-uuid/XXX
+```
+ 
+Open the partition with LUKS.
+ 
+```
+cryptsetup luksOpen /dev/disk/by-uuid/XXX mycrypteddev
+```
+ 
+The partition is now available from `/dev/mapper/mycrypteddev` as a "regular" partition, since LUKS is now handling all block device encryption between the use and the device.
+
+Set up a filesystem on the partition:
+```
+mkfs.ext4 /dev/mapper/mycrypteddev
+```
+ 
+Close the partition with LUKS:
+```
+cryptsetup luksClose /dev/mapper/mycrypteddev
+```
+
+
+### manual usage
+ 
+Encryption setup complete! 
+Now every time you want to access the partition, you must first open it with LUKS and then mount it. 
+Then when you're done, do the reverse: unmount and close it with LUKS.
+
+To mount and open with LUKS:
+```
+cryptsetup luksOpen /dev/disk/by-uuid/XXX mycrypteddev
+mount -t ext4 /dev/mapper/mycrypteddev /mnt/mount_point
+```
+ 
+To unmount and close with LUKS:
+```
+umount /mnt/mount_point
+cryptsetup luksClose mycrypteddevr
+```
+
+### automatic mounting
+
+```
+#!/bin/zsh
+# LICENSE: PUBLIC DOMAIN
+# mount/unmount encrypted flash drives
+ 
+mp=$3
+uuid=""
+ 
+case $2 in
+    "0")
+        uuid="11e102cd-dea1-46a8-ae9b-b3f74b536e64" # my red USB drive
+        ;;
+    "1")
+        uuid="cf169437-b937-4a39-86cb-7ca82bd9fe94" # my green one
+        ;;
+    "2")
+        uuid="57a0b7d5-d2a6-47e0-a0e3-adf69501d0cd" # my blue one
+        ;;
+    *)
+        ;;
+esac
+ 
+if [[ $uuid == "" ]]; then
+    echo "No predefined device specified."
+    exit 0
+fi
+ 
+case $1 in
+    "m")
+        echo "Authorizing encrypted partition /dev/mapper/$mp..."
+        sudo cryptsetup luksOpen /dev/disk/by-uuid/$uuid $mp
+        echo -n "Mounting partition on /mnt/$mp..."
+        sudo mount -t ext4 /dev/mapper/$mp /mnt/$mp && echo "done."
+        ;;
+    "u")
+        echo -n "Unmounting /mnt/$mp..."
+        sudo umount /mnt/$mp && echo "done."
+        echo -n "Closing encrypted partition /dev/mapper/$mp..."
+        sudo cryptsetup luksClose $mp && echo "done."
+        ;;
+    *)
+        ;;
+esac
+```
+
+### automated script usage
+
+To mount the green USB to `/mnt/ef0` (`ef0` is just an arbitrary folder name):
+```
+./cmount.sh m 1 ef0
+```
+
+Then to unmount:
+```
+./cmount.sh u 1 ef0
+```
 
 
