@@ -5,8 +5,67 @@ For installation notes check installation guide e.g. on [X1C6](https://github.co
 Finally, as per unwritten Arch Linux community rules apparently these tips/guides should not exists in the first place so do not read this. These are my own personal notes.
 
 
+<!--ts-->
+   * [Basic survival commands](#basic-survival-commands)
+         * [systemctl](#systemctl)
+         * [installing from AUR](#installing-from-aur)
+         * [AUR helpers](#aur-helpers)
+   * [Configuring](#configuring)
+      * [time](#time)
+      * [wifi](#wifi)
+      * [intel gpu](#intel-gpu)
+      * [terminal](#terminal)
+      * [login prompt](#login-prompt)
+      * [audio](#audio)
+         * [Remove and blacklist PC speaker](#remove-and-blacklist-pc-speaker)
+      * [keyboard](#keyboard)
+         * [thinkpad keyboard shortcuts](#thinkpad-keyboard-shortcuts)
+         * [display brigthness controls](#display-brigthness-controls)
+         * [clipboard and copy-pasting](#clipboard-and-copy-pasting)
+         * [Event handler script handler.sh](#event-handler-script-handlersh)
+         * [typomatic keyboard tweaks](#typomatic-keyboard-tweaks)
+         * [TrackPoint configuration](#trackpoint-configuration)
+      * [OPTIONAL: tiling window manager Awesome](#optional-tiling-window-manager-awesome)
+         * [Automatic window opening &amp; setup](#automatic-window-opening--setup)
+      * [openssh](#openssh)
+      * [fingerprint reader](#fingerprint-reader)
+      * [bluetooth](#bluetooth)
+         * [checking device status](#checking-device-status)
+         * [debugging bluetooth device and service](#debugging-bluetooth-device-and-service)
+         * [removing wifi &amp; bluetooth interference settings](#removing-wifi--bluetooth-interference-settings)
+         * [actual usage with blueman](#actual-usage-with-blueman)
+         * [delay bluetooth powering from restart](#delay-bluetooth-powering-from-restart)
+         * [Old appendix:](#old-appendix)
+         * [auto switch on connect](#auto-switch-on-connect)
+         * [airpods](#airpods)
+      * [keyring](#keyring)
+      * [misc apps that work well in browser:](#misc-apps-that-work-well-in-browser)
+   * [Work in Progress / NOTES:](#work-in-progress--notes)
+      * [power saving](#power-saving)
+      * [throttled](#throttled)
+      * [sleep/hibernation](#sleephibernation)
+      * [disk usage](#disk-usage)
+      * [thinkpad hw controls](#thinkpad-hw-controls)
+      * [screenshots](#screenshots)
+      * [mac files (incl. sparsebundles)](#mac-files-incl-sparsebundles)
+      * [OS helper](#os-helper)
+      * [TODO / missing functionality list](#todo--missing-functionality-list)
+   * [Appendix](#appendix)
+      * [boot into live iso](#boot-into-live-iso)
+      * [kernel compilation](#kernel-compilation)
+         * [initial ramdisk](#initial-ramdisk)
+         * [encrypting USB flash drives](#encrypting-usb-flash-drives)
+         * [manual usage](#manual-usage)
+         * [automatic mounting](#automatic-mounting)
+         * [automated script usage](#automated-script-usage)
 
-## basic commands needed
+<!-- Added by: natj, at: Sat 23 May 2020 10:49:54 AM EDT -->
+
+<!--te-->
+
+
+
+# Basic survival commands 
 
 There are few stuff that gets done repeatedly in Arch. I write these down as a reference. 
 
@@ -19,10 +78,17 @@ Check status of running services:
 systemctl status
 ```
 
-Start/stop new services
+Enable new service at boot
+```
+systemctl enable <service_name>
+```
+
+Start (or stop) new services on-the-fly
 ```
 systemctl start <service_name>
 ```
+
+
 
 ### installing from AUR
 
@@ -46,18 +112,28 @@ that corresponds to `pacman -U pkgname`
 
 ### AUR helpers
 
-https://github.com/Jguer/yay
+After you are familiar with installing AUR packages manually, it is recommended to install an AUR manager. I found `yay` to be nice and simple: https://github.com/Jguer/yay
 
-```
-yay pkgname
+
+Basic usage is handled with:
+```bash
+yay -S pkgname      #install package from AUR
+yay <Search Term> 	#Present package-installation selection menu.
+yay -Ps 	        #Print system statistics.
+yay -Yc 	        #Clean unneeded dependencies.
+yay -G <AUR pkg> 	#Download PKGBUILD from ABS or AUR.
+yay -Y --gendb 	    #Generate development package database used for devel update.
 ```
 
-yay <Search Term> 	Present package-installation selection menu.
-yay -Ps 	Print system statistics.
-yay -Yc 	Clean unneeded dependencies.
-yay -G <AUR Package> 	Download PKGBUILD from ABS or AUR.
-yay -Y --gendb 	Generate development package database used for devel update.
+Once in a while it is good to run a full system update with:
+```bash
 yay -Syu --devel --timeupdate 	Perform system upgrade, but also check for development package updates and use PKGBUILD modification time (not version number) to determine update.
+```
+
+
+# Configuring
+
+After those preliminaries, here follows the actual list configurations.
 
 
 ## time
