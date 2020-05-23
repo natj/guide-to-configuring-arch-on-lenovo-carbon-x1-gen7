@@ -7,9 +7,9 @@ Finally, as per unwritten Arch Linux community rules apparently these tips/guide
 
 <!--ts-->
    * [Basic survival commands](#basic-survival-commands)
-         * [systemctl](#systemctl)
-         * [installing from AUR](#installing-from-aur)
-         * [AUR helpers](#aur-helpers)
+      * [systemctl](#systemctl)
+      * [installing from AUR](#installing-from-aur)
+      * [AUR helpers](#aur-helpers)
    * [Configuring](#configuring)
       * [time](#time)
       * [wifi](#wifi)
@@ -726,6 +726,42 @@ git config --global credential.helper /usr/lib/git-core/git-credential-libsecret
 ```
 
 
+## power saving 
+
+
+Install `tlp` and dependencies:
+```
+tpi
+tp_smapi #not needed; for older models
+acpi_call
+```
+
+Then start and enable the service
+```
+systemctl enable tlp.service
+```
+
+Check current status
+```
+tlp-stat
+```
+
+And finally, add battery charge depletion. Modify `/etc/tlp.conf` with these lines
+
+```
+START_CHARGE_THRESH_BAT0=75
+STOP_CHARGE_THRESH_BAT0=80
+```
+
+
+
+Refs:
+- https://wiki.archlinux.org/index.php/Power_management
+- https://www.reddit.com/r/archlinux/comments/2sq45s/any_helpfull_tweaks_for_thinkpads/
+- http://www.thinkwiki.org/wiki/Tp_smapi
+- https://linrunner.de/tlp/
+- https://askubuntu.com/questions/34452/how-can-i-limit-battery-charging-to-80-capacity
+
 ## misc apps that work well in browser:
 
 Many apps work well in browser (some in `firefox`, some in `chromium`).
@@ -740,35 +776,6 @@ Many apps work well in browser (some in `firefox`, some in `chromium`).
 
 
 # Work in Progress / NOTES:
-
-## power saving
-
-https://wiki.archlinux.org/index.php/Power_management
-https://www.reddit.com/r/archlinux/comments/2sq45s/any_helpfull_tweaks_for_thinkpads/
-http://www.thinkwiki.org/wiki/Tp_smapi
-https://linrunner.de/tlp/
-https://askubuntu.com/questions/34452/how-can-i-limit-battery-charging-to-80-capacity
-
-installed:
-```
-tpi
-tp_smapi #not needed; for older models
-acpi_call
-```
-
-systemctl enable tlp.service
-
-
-check status:
-tlp-stat
-
-And finally, add battery charge depletion 
-
-/etc/tlp.conf
-
-START_CHARGE_THRESH_BAT0=75
-STOP_CHARGE_THRESH_BAT0=80
-
 
 
 ## throttled
