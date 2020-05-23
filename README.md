@@ -164,19 +164,9 @@ System clock is quite stable and robust so I don't see any point launching a dae
 
 For wifi you have two options: `netctl` or `NetworkManager`. Both are relatively easy to use BUT do not work if they are both running simultaneously. Pick one.
 
+I went with 'NetworkManager'. It has worked ok ever since launching.
+
 TODO: write how to save wlan configurations and autoconnect.
-
-## intel gpu
-
-TODO: `intel_agp`  and `i915`
-
-Refs:
-
-- https://wiki.archlinux.org/index.php/intel_graphics
-- https://bbs.archlinux.org/viewtopic.php?id=127953
-
-https://gist.github.com/Brainiarc7/aa43570f512906e882ad6cdd835efe57
-
 
 
 ## terminal
@@ -191,7 +181,7 @@ To load these we can modify the `.Xresources` as
 ! fix HiDpi scaling 
 Xft.dpi: 192
 
-! TODO: define basic colors here< whatever you like
+! TODO: define basic colors here; pick whatever you like. For my configuration, see below.
 
 urxvt*scrollBar: False
 
@@ -202,10 +192,74 @@ urxvt*transparent: true
 urxvt*shading: 20
 
 URxvt.font:       xft:Hack-Regular:pixelsize=22
-URxvt.boldFont:   xft:Hack-Bold:pixelsize=22
+URxvt.boldFont:   xft:Hack-Bold:weight=bold:pixelsize=22,xft:Symbola
 URxvt.italicFont: xft:Hack-RegularOblique:pixelsize=22:slant=italic
 URxvt.letterSpace: 0
 ```
+
+### reasonable terminal default colors
+
+Here is a reasonable terminal color list that you can add to `.Xresources`.
+
+```bash
+#define S_base03        #002b36
+#define S_base02        #073642
+#define S_base01        #586e75
+#define S_base00        #657b83
+#define S_base0         #839496
+#define S_base1         #93a1a1
+#define S_base2         #eee8d5
+#define S_base3         #fdf6e3
+
+*background:            S_base03
+*foreground:            S_base0
+*fadeColor:             S_base03
+*cursorColor:           S_base1
+*pointerColorBackground:S_base01
+*pointerColorForeground:S_base1
+
+#define S_yellow        #b58900
+#define S_orange        #cb4b16
+#define S_red           #dc322f
+#define S_magenta       #d33682
+#define S_violet        #6c71c4
+#define S_blue          #268bd2
+#define S_cyan          #2aa198
+#define S_green         #859900
+
+!! black dark/light
+*color0:                S_base02
+*color8:                S_base03
+
+!! red dark/light
+*color1:                S_red
+*color9:                S_orange
+
+!! green dark/light
+*color2:                S_green
+*color10:               S_base01
+
+!! yellow dark/light
+*color3:                S_yellow
+*color11:               S_base00
+
+!! blue dark/light
+*color4:                S_blue
+*color12:               S_base0
+
+!! magenta dark/light
+*color5:                S_magenta
+*color13:               S_violet
+
+!! cyan dark/light
+*color6:                S_cyan
+*color14:               S_base1
+
+!! white dark/light
+*color7:                S_base2
+*color15:               S_base3
+```
+
 
 ## login prompt
 
@@ -255,8 +309,9 @@ I find it nice to remove the internal PC speaker from beeping. Do
 ```
 sudo rmmod pcspkr
 ```
-to test the eerie silence. Then make it permanent by blacklisting the module from being loaded by udev with
+and enjoy the eerie silence. 
 
+Make it permanent by blacklisting the module from being loaded by udev with
 ```
 echo "blacklist pcspkr" > /etc/modprobe.d/nobeep.conf
 ```
@@ -266,13 +321,11 @@ echo "blacklist pcspkr" > /etc/modprobe.d/nobeep.conf
 
 ### thinkpad keyboard shortcuts
 
-In order to get the thinkpad extra keyboard keys working the running kernel needs to be updated with the `thinkpad_acpi` module.
-
-TODO: Add installation notes
+In order to get the thinkpad extra keyboard keys working the running kernel needs to be updated with the `thinkpad_acpi` module. Install that and enable the service.
 
 Next we need a script that listens to keypresses, captures them and lets us perform stuff based on them.
 
-Install `acpid` for that. Enabled it to `systemctl`.
+Install `acpid` for that. Enabled it via `systemctl enable acpi.service`.
 
 Try with live capturing:
 ```
@@ -296,10 +349,10 @@ and maximum possible brightness (to get a feeling of the scaling) with
 cat /sys/class/backlight/intel_backlight/max_brigthness
 ```
 
-Different machines might have different `bl_device` so check that if `intel_backlight` is not there.
+Different machines might have different `bl_device` so check that `intel_backlight` exists.
 
 
-For the actual brightness control we need to add user to `video` grop in addition to have permission to write to the needed configuration files.
+For the actual brightness control we need to add user to `video` group in oder to have permission to write to the needed configuration files.
 
 Add a file `/etc/udev/rules.d/backlight.rules` with:
 ```
@@ -307,17 +360,16 @@ ACTION=="add", SUBSYSTEM=="backlight", KERNEL=="intel_backlight", RUN+="/bin/chg
 ACTION=="add", SUBSYSTEM=="backlight", KERNEL=="intel_backlight", RUN+="/bin/chmod g+w /sys/class/backlight/%k/brightness"
 ```
 
-Ref: 
-
-- https://wiki.archlinux.org/index.php/Backlight
-
-
-then
+Then
 ```
 sudo usermod -aG <user>
 ```
 
-after this you have permission to change `bl_dev` and fn+f5/f6 should work.
+After this you have permission to change `bl_dev` and `Fn`+`F5`/`F6` should work.
+
+Ref: 
+- https://wiki.archlinux.org/index.php/Backlight
+
 
 ### clipboard and copy-pasting
 
@@ -327,6 +379,8 @@ set clipboard=unnamedplus
 ```
 to vim config (`~/.config/nvim/init.vim` for `neovim`). Importantly, after this the X clipboard can be accessed with `shift`+`mouse-middle-button`.
 
+
+TODO: opposite  (copypasting from neovim back) does not seem to work. Fix?
 
 
 ### Event handler script `handler.sh`
@@ -383,38 +437,38 @@ xset r rate 225 33
 
 ### TrackPoint configuration
 
-libinput by default
+Trackpoint is configurable via `libinput` by default.
 
-other options
-evdev 
-mtrack
+Other options are `evdev` and `mtrack`.
 
-usage:
+Usage:
 
+```
 xinput --list
 xinput --list-props ID
-
+```
 
 Insert slight acceleration to make it easier to go from one end of the screen to another:
+```
 xinput --set-prop 15 'libinput Accel Speed' 0.1
+```
 
 Alternatively, for detailed work, add negative acceleration
+```
 xinput --set-prop 15 'libinput Accel Speed' -0.3
-
+```
 
 Refs:
-
-https://wiki.archlinux.org/index.php/TrackPoint
-http://www.thinkwiki.org/wiki/How_to_configure_the_TrackPoint
-https://bill.harding.blog/2017/12/27/toward-a-linux-touchpad-as-smooth-as-macbook-pro/
-https://wayland.freedesktop.org/libinput/doc/1.10.7/trackpoints.html
-
+- https://wiki.archlinux.org/index.php/TrackPoint
+- http://www.thinkwiki.org/wiki/How_to_configure_the_TrackPoint
+- https://bill.harding.blog/2017/12/27/toward-a-linux-touchpad-as-smooth-as-macbook-pro/
+- https://wayland.freedesktop.org/libinput/doc/1.10.7/trackpoints.html
 
 
 
 ## OPTIONAL: tiling window manager Awesome
 
-Tiling window managers are the best. I installed Awesome to my Arch. 
+Tiling window managers are the best. I installed `awesome` to my Arch. 
 
 Process is relatively straightforward but to get transparency also working you need these packages:
 
@@ -427,13 +481,14 @@ awesome
 In addition, the `.xinitrc` needs to be modified. Add these lines to the **end** of the file:
 
 ```
-exec xcompmgr -c &
-
+exec xcompmgr -c & #optional for real transparency
 exec awesome
 ```
 
+Addendum: transparency causes issues with screen sharing with softwares like Zoom etc. I recommend not using it.
 
-### Automatic window opening & setup
+
+### automatic window opening & setup
 
 Add these to the end of the `.config/awesome/rc.lua` to automatically load some apps at startup
 
@@ -462,7 +517,7 @@ Default ssh app from the public `openssh` package does not support kerberos tick
 
 ## fingerprint reader
 
-Packages we need:
+Fingerprint reader installation needs some effort but does work in the end.  Packages we need:
 ```
 fwupdmgr
 usbutils
@@ -489,7 +544,9 @@ Check that you have:
 ```
 with at least version 10.02 for Prometheus and 0022 for Prometheys IOTA config drivers.
 
-If not, we need to update it from the lvfs-testing repository (i.e. not stable updates). Enable lvfs testing with:
+If not, we need to update it from the lvfs-testing repository (i.e. not stable updates). This step might change when the fix is finally accepted to upstream.
+
+Enable lvfs testing with:
 ```
 sudo fwupdmgr enable-remote lvfs-testing
 ```
@@ -533,7 +590,7 @@ by inserting this to the top of the list.
 
 Similarly, one could edit `/etc/pam.d/sudo`. However, not sure if this is wise.
 
-By using the `sufficient` optoin the reader will ask for the index finger 3 times and if failed it will open the password box as normal.
+By using the `sufficient` option the reader will ask for the index finger 3 times and if failed it will open the password box as normal.
 
 
 Refs:
@@ -543,6 +600,11 @@ Refs:
 
 
 ## bluetooth
+
+Bluetooth installation is another pain the ass. 
+
+TODO: these notes are still incomplete. Bluetooth does work but only intermittently. Make it stable.
+
 
 Packages needed:
 ```
@@ -619,7 +681,7 @@ connect MAC_ADDRESS
 ```
 NOTE: blueman automates all of this so not really needed in real life usage scenario.
 
-Apparantly, a better way to debug this is by first stoppign the service
+Apparantly, a better way to debug this is by first stopping the service
 ```
 systemctl stop bluetooth
 ```
@@ -628,8 +690,6 @@ and then loading it manually
 /usr/lib/bluetoothd -n -d
 ```
 and checking the output.
-
-TODO: with or without sudo?
 
 Another tool is the `btmgmt` with commands:
 ```
@@ -665,6 +725,8 @@ Refs:
 
 ### delay bluetooth powering from restart
 
+Some users said that this helps. I did not find any diffrence.
+
 Create the file `/etc/systemd/system/bluetooth-poweron.service` as root and put the following code into it:
 
 ```
@@ -684,7 +746,9 @@ WantedBy=multi-user.target
 then run `systemctl enable bluetooth-poweron`
 
 
-### Old appendix:
+### pulse audio libraries
+
+Some also said that these are needed. Again I did not find these important.
 
 Modify `/etc/pulse/default.pa`
 ```
@@ -701,18 +765,20 @@ load-module module-switch-on-connect
 
 NOTE: `blueman-applet` does pulseaudio switching automatically. These modules seem to be **NOT** needed.
 
-### airpods
+### apple airpods
 
-https://c-command.com/toothfairy/manual
-https://github.com/adolfintel/OpenPods/tree/master/OpenPods
-https://askubuntu.com/questions/922860/pairing-apple-airpods-as-headset/1063582#1063582
+TODO: Getting Apple AirPods to work seems the trickiest. Not working reliably atm.
+
+Refs:
+
+- https://c-command.com/toothfairy/manual
+- https://github.com/adolfintel/OpenPods/tree/master/OpenPods
+- https://askubuntu.com/questions/922860/pairing-apple-airpods-as-headset/1063582#1063582
 
 
 ## keyring
 
-TODO: finish installation
-
-Keyring remembers your passwords for a while during the session. Install
+Keyring remembers your passwords for a while during the X session. Install it with
 ```
 libsecret
 gnome-keyring
@@ -728,6 +794,7 @@ git config --global credential.helper /usr/lib/git-core/git-credential-libsecret
 
 ## power saving 
 
+`tlp` package automates most of the nasty AC/BATTERY power saving tweaks. I found it super useful.
 
 Install `tlp` and dependencies:
 ```
@@ -754,7 +821,6 @@ STOP_CHARGE_THRESH_BAT0=80
 ```
 
 
-
 Refs:
 - https://wiki.archlinux.org/index.php/Power_management
 - https://www.reddit.com/r/archlinux/comments/2sq45s/any_helpfull_tweaks_for_thinkpads/
@@ -764,18 +830,29 @@ Refs:
 
 ## misc apps that work well in browser:
 
-Many apps work well in browser (some in `firefox`, some in `chromium`).
+Finally, not everything is needed as an local application. Some stuff seem to work ok in the browser (some in `firefox`, some in `chromium`).
 
 - email -> gmail
 - whatsapp -> whatsapp web
 - spotify -> web.spotify
 
 
-
 ----
 
 
 # Work in Progress / NOTES:
+
+
+## intel gpu
+
+Notes on gpu and drivers. Currently works well enough out of the box.
+
+TODO: `intel_agp`  and `i915` drivers?
+
+Refs:
+- https://wiki.archlinux.org/index.php/intel_graphics
+- https://bbs.archlinux.org/viewtopic.php?id=127953
+- https://gist.github.com/Brainiarc7/aa43570f512906e882ad6cdd835efe57
 
 
 ## throttled
@@ -790,9 +867,10 @@ TODO: check `i3lock` for screen lock
 
 ## disk usage
 
-https://github.com/amanusk/s-tui
-https://gitlab.freedesktop.org/drm/igt-gpu-tools
-https://www.archlinux.org/packages/community/x86_64/powertop/
+Refs:
+- https://github.com/amanusk/s-tui
+- https://gitlab.freedesktop.org/drm/igt-gpu-tools
+- https://www.archlinux.org/packages/community/x86_64/powertop/
 
 ## thinkpad hw controls
 
@@ -822,8 +900,6 @@ https://albertlauncher.github.io/help/
 
 TODO: modify default window positions to have 2/3 ratios.
 
-TODO: password storing
-
 TODO: terminal does not always update
 
 TODO: proper folder viewer 
@@ -833,8 +909,6 @@ TODO: open script to open every file type
 TODO: OS helper: albert/mutate etc
 
 TODO: bluetooth + airpods
-
-TODO: battery charging & optimization (depletion prevention with 80% charge)
 
 TODO: awesome bar: squeeze battery text
 
@@ -847,6 +921,8 @@ TODO: awesome bar: toggl status
 ----
 
 # Appendix
+
+This is appendix of stuff that does not need to be repeated but might come in handy once in a while.
 
 ## boot into live iso
 
