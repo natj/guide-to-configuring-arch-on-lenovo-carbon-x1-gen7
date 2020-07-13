@@ -8,9 +8,9 @@ Finally, as per unwritten Arch Linux community rules apparently these tips/guide
 <!--ts-->
    * [Configuring Arch Linux on Thinkpad X1 Carbon Gen7](#configuring-arch-linux-on-thinkpad-x1-carbon-gen7)
    * [Basic survival commands](#basic-survival-commands)
-         * [systemctl](#systemctl)
-         * [installing from AUR](#installing-from-aur)
-         * [AUR helpers](#aur-helpers)
+      * [systemctl](#systemctl)
+      * [installing from AUR](#installing-from-aur)
+      * [AUR helpers](#aur-helpers)
    * [Configuring](#configuring)
       * [time](#time)
       * [wifi](#wifi)
@@ -340,9 +340,9 @@ Button action can be configured by modifying an event handler script at `/etc/ac
 My script is at the bottom of this section.
 
 
-### display brigthness controls
+### display brightness controls
 
-You can check the current brigthness with:
+You can check the current brightness with:
 ```
 cat /sys/class/backlight/intel_backlight/brigthness
 ```
@@ -383,6 +383,7 @@ to vim config (`~/.config/nvim/init.vim` for `neovim`). Importantly, after this 
 
 
 TODO: opposite  (copypasting from neovim back) does not seem to work. Fix?
+
 
 
 ### Event handler script `handler.sh`
@@ -466,6 +467,22 @@ Refs:
 - https://bill.harding.blog/2017/12/27/toward-a-linux-touchpad-as-smooth-as-macbook-pro/
 - https://wayland.freedesktop.org/libinput/doc/1.10.7/trackpoints.html
 
+
+### Control+Enter and Shift+Enter
+
+urxvt (and many others) terminal is not capable of detecting Ctrl+Enter or Shift+Enter. Luckily, we can patch this by adding to `.Xresources`:
+
+```
+! add detection of ctrl/shift + enter
+URxvt.keysym.S-Return: \033[13;2u
+URxvt.keysym.C-Return: \033[13;5u
+```
+
+After this `xrdb .Xresources` and restart your terminal. Testing can be done by first inserting `Ctrl+V` followed by `Return` and then testing your keybinding. E.g.
+
+Activate key translation mode `Ctrl+V` + `Return`.
+Test new binding `Ctrl+Return`.
+This should print `\033[13;5u`
 
 
 ## OPTIONAL: tiling window manager Awesome
@@ -819,6 +836,11 @@ START_CHARGE_THRESH_BAT0=75
 STOP_CHARGE_THRESH_BAT0=80
 ```
 
+To bring the battery to full charge once (reverts back to previous levels after this) issue
+```
+sudo tlp fullcharge
+```
+
 
 Refs:
 - https://wiki.archlinux.org/index.php/Power_management
@@ -826,6 +848,127 @@ Refs:
 - http://www.thinkwiki.org/wiki/Tp_smapi
 - https://linrunner.de/tlp/
 - https://askubuntu.com/questions/34452/how-can-i-limit-battery-charging-to-80-capacity
+
+## adding swapfile
+
+Create directory for the swap file e.g. into `/var/cache/swap`
+
+Initialize a 8GB file
+```
+dd if if=/dev/zero of=swapfile bs=1K count=8M
+sudo chmod 600 swapfile 
+```
+
+convert it to swap space
+```
+sudo mkswap swapfile
+```
+
+enable paging and swapping
+```
+sudo swapon swapfile
+```
+
+Verify that it works by looking into `swapon -s`, `top`, or `free`
+
+To make it permanent add to `/etc/fstab`
+```
+/etc/cache/swap/swapfile none swap defaults 0 0
+```
+
+and test that the bindings work by disabling and enabling it
+```
+sudo swapoff swapfile
+sudo swapon -va
+```
+
+## TODO: nnn file browser and media thumbnails
+
+install `nnn`. Then configure it.
+
+TODO: launcher script with `n`. See `.basrc`.
+TODO: nuke launching with right fall backs
+
+
+### xdg-open
+
+To config it we need set xdg-mime types for different files.
+
+To query file type and opener:
+```
+xdg-mime query filetype photo.jpeg
+xdg-mime query default image/jpeg
+```
+
+and to set
+```
+xdg-mime default feh.desktop image/jpeg
+```
+
+Now lets set reasonable defaults:
+
+```
+ xdg-mime default zathura.desktop application/pdf
+```
+
+
+### preview
+
+To make the preview plugin work we need to copy
+
+https://github.com/jarun/nnn/blob/master/plugins/preview-tabbed and `chmod +x preview-tabbed`
+https://github.com/jarun/nnn/blob/master/plugins/nuke and `chmod +x nuke`
+
+to `~/.config/nnn/plugins/`
+
+and install these packages
+
+```
+xdotool
+tabbed # AUR
+zathura 
+```
+
+nuke dependencies:
+```
+bsdtar
+unrar
+zathura
+mpv,
+odt2txt
+w3m / lynx / elinks
+jq / python json.tool
+sxiv / viu
+mocplay
+zathura
+djvutxt
+exiftool
+```
+aur:
+7z
+glow
+
+
+
+### pdf viewing with zathura
+
+For pdfs `zathura` is a minimal browsing application. Its Arch installation lacks a desktop mime link (this is a bug) that we need to add manually by sudo creating `/usr/share/application/zathura.desktop` with the following content
+
+```
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Zathura
+Comment=A minimalistic PDF viewer
+Exec=zathura %f
+Terminal=false
+Categories=Office;Viewer;
+MimeType=application/pdf;
+```
+
+Refs:
+- https://github.com/escherdragon/zathura/blob/master/zathura.desktop
+
 
 ## misc apps that work well in browser:
 
@@ -840,6 +983,12 @@ Finally, not everything is needed as an local application. Some stuff seem to wo
 
 
 # Work in Progress / NOTES:
+
+## spell checking
+
+hunspell
+hunspell-en_US
+
 
 
 ## intel gpu
@@ -969,7 +1118,14 @@ warning: /etc/fwupd/remotes.d/lvfs.conf installed as /etc/fwupd/remotes.d/lvfs.c
 Configuration is in `/etc/mkinitcpio.conf`
 
 
-### encrypting USB flash drives
+### add LTS kernel to UEFI 
+
+TODO:
+
+efibootmgr --disk /dev/sdX --part Y --create --label "Arch Linux LTS" --loader /vmlinuz-linux-lts --unicode 'root=PARTUUID=XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX rw initrd=\initramfs-linux-lts.img' --verbose
+
+
+## encrypting USB flash drives
 
 Almost directly copied from: https://zuttobenkyou.wordpress.com/2012/12/08/how-to-encrypt-your-usb-flash-drives/
 
@@ -1102,5 +1258,14 @@ Then to unmount:
 ```
 ./cmount.sh u 1 ef0
 ```
+
+## manage packages
+
+Query user installed packages:
+
+```
+comm -23 <(pacman -Qqett | sort) <(pacman -Qqg base -g base-devel | sort | uniq)
+```
+
 
 
