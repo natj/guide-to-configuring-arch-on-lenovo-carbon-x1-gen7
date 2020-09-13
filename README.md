@@ -170,6 +170,20 @@ I went with 'NetworkManager'. It has worked ok ever since launching.
 
 TODO: write how to save wlan configurations and autoconnect.
 
+### Basic NetworkManager usage
+
+show wifis
+```
+nmcli device wifi list
+```
+and connect
+```
+nmcli device wifi connect <SSID> password <password>
+```
+
+
+
+
 
 ## terminal
 
@@ -977,6 +991,32 @@ Finally, not everything is needed as an local application. Some stuff seem to wo
 - email -> gmail
 - whatsapp -> whatsapp web
 - spotify -> web.spotify
+
+
+
+## lock screen
+
+```
+yay -S bc
+yay -S betterlockscreen
+```
+
+see the file /lib/system.d/betterlockscreen@.service and enable:
+```
+systemctl enable betterlockscreen@natj.service
+```
+
+Pre-create image cache:
+```
+betterlockscreen -u wpaper.jpg
+```
+
+add /etc/pam.d/i3lock:
+```
+auth sufficient pam_fprintd.so
+auth include system-auth
+```
+
 
 
 ----
