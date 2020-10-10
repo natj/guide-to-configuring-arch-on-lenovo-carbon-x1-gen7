@@ -6,60 +6,74 @@ Finally, as per unwritten Arch Linux community rules apparently these tips/guide
 
 
 <!--ts-->
-   * [Configuring Arch Linux on Thinkpad X1 Carbon Gen7](#configuring-arch-linux-on-thinkpad-x1-carbon-gen7)
-   * [Basic survival commands](#basic-survival-commands)
-      * [systemctl](#systemctl)
-      * [installing from AUR](#installing-from-aur)
-      * [AUR helpers](#aur-helpers)
-   * [Configuring](#configuring)
-      * [time](#time)
-      * [wifi](#wifi)
-      * [terminal](#terminal)
-         * [reasonable terminal default colors](#reasonable-terminal-default-colors)
-      * [login prompt](#login-prompt)
-      * [audio](#audio)
-         * [Remove and blacklist PC speaker](#remove-and-blacklist-pc-speaker)
-      * [keyboard](#keyboard)
-         * [thinkpad keyboard shortcuts](#thinkpad-keyboard-shortcuts)
-         * [display brigthness controls](#display-brigthness-controls)
-         * [clipboard and copy-pasting](#clipboard-and-copy-pasting)
-         * [Event handler script handler.sh](#event-handler-script-handlersh)
-         * [typomatic keyboard tweaks](#typomatic-keyboard-tweaks)
-         * [TrackPoint configuration](#trackpoint-configuration)
-      * [OPTIONAL: tiling window manager Awesome](#optional-tiling-window-manager-awesome)
-         * [automatic window opening](#automatic-window-opening)
-      * [openssh](#openssh)
-      * [fingerprint reader](#fingerprint-reader)
-      * [bluetooth](#bluetooth)
-         * [checking device status](#checking-device-status)
-         * [debugging bluetooth device and service](#debugging-bluetooth-device-and-service)
-         * [removing wifi &amp; bluetooth interference settings](#removing-wifi--bluetooth-interference-settings)
-         * [actual usage with blueman](#actual-usage-with-blueman)
-         * [delay bluetooth powering from restart](#delay-bluetooth-powering-from-restart)
-         * [pulse audio libraries](#pulse-audio-libraries)
-         * [auto switch on connect](#auto-switch-on-connect)
-         * [apple airpods](#apple-airpods)
-      * [keyring](#keyring)
-      * [power saving](#power-saving)
-      * [misc apps that work well in browser:](#misc-apps-that-work-well-in-browser)
-   * [Work in Progress / NOTES:](#work-in-progress--notes)
-      * [intel gpu](#intel-gpu)
-      * [throttled](#throttled)
-      * [sleep/hibernation](#sleephibernation)
-      * [disk usage](#disk-usage)
-      * [thinkpad hw controls](#thinkpad-hw-controls)
-      * [screenshots](#screenshots)
-      * [mac files (incl. sparsebundles)](#mac-files-incl-sparsebundles)
-      * [OS helper](#os-helper)
-      * [TODO / missing functionality list](#todo--missing-functionality-list)
-   * [Appendix](#appendix)
-      * [boot into live iso](#boot-into-live-iso)
-      * [kernel compilation](#kernel-compilation)
-         * [initial ramdisk](#initial-ramdisk)
-         * [encrypting USB flash drives](#encrypting-usb-flash-drives)
-         * [manual usage](#manual-usage)
-         * [automatic mounting](#automatic-mounting)
-         * [automated script usage](#automated-script-usage)
+
+* [Configuring Arch Linux on Thinkpad X1 Carbon Gen7](#configuring-arch-linux-on-thinkpad-x1-carbon-gen7)
+* [Basic survival commands](#basic-survival-commands)
+    * [systemctl](#systemctl)
+    * [installing from AUR](#installing-from-aur)
+    * [AUR helpers](#aur-helpers)
+* [Configuring](#configuring)
+    * [time](#time)
+    * [wifi](#wifi)
+        * [Basic NetworkManager usage](#basic-networkmanager-usage)
+    * [terminal](#terminal)
+        * [reasonable terminal default colors](#reasonable-terminal-default-colors)
+    * [login prompt](#login-prompt)
+    * [audio](#audio)
+        * [Remove and blacklist PC speaker](#remove-and-blacklist-pc-speaker)
+    * [keyboard](#keyboard)
+        * [thinkpad keyboard shortcuts](#thinkpad-keyboard-shortcuts)
+        * [display brightness controls](#display-brightness-controls)
+        * [clipboard and copy-pasting](#clipboard-and-copy-pasting)
+        * [Event handler script handler.sh](#event-handler-script-handlersh)
+        * [typomatic keyboard tweaks](#typomatic-keyboard-tweaks)
+        * [TrackPoint configuration](#trackpoint-configuration)
+        * [Control Enter and Shift Enter](#controlenter-and-shiftenter)
+    * [openssh](#openssh)
+    * [fingerprint reader](#fingerprint-reader)
+    * [bluetooth](#bluetooth)
+        * [checking device status](#checking-device-status)
+        * [debugging bluetooth device and service](#debugging-bluetooth-device-and-service)
+        * [removing wifi &amp; bluetooth interference settings](#removing-wifi--bluetooth-interference-settings)
+        * [actual usage with blueman](#actual-usage-with-blueman)
+        * [bluetooth appendix: delay bluetooth powering from restart](#bluetooth-appendix-delay-bluetooth-powering-from-restart)
+        * [bluetooth appendix: pulse audio libraries](#bluetooth-appendix-pulse-audio-libraries)
+        * [bluetooth appendix: auto switch on connect](#bluetooth-appendix-auto-switch-on-connect)
+        * [bluetooth appendix: apple airpods](#bluetooth-appendix-apple-airpods)
+    * [keyring](#keyring)
+    * [power saving](#power-saving)
+    * [adding swapfile](#adding-swapfile)
+    * [nnn file browser and media thumbnails](#nnn-file-browser-and-media-thumbnails)
+        * [nnn appendix: xdg-open - default apps for different file types](#nnn-appendix-xdg-open---default-apps-for-different-file-types)
+        * [nnn appendix: preview](#nnn-appendix-preview)
+        * [nnn appendix: pdf viewing wih zathura](#nnn-appendix-pdf-viewing-with-zathura)
+    * [lock screen](#lock-screen)
+    * [screenshots](#screenshots)
+    * [Folder encryption](#folder-encryption)
+    * [Fish shell](#fish-shell)
+* [Work in Progress / NOTES:](#work-in-progress--notes)
+    * [spell checking](#spell-checking)
+    * [intel gpu](#intel-gpu)
+    * [throttled](#throttled)
+    * [disk usage](#disk-usage)
+    * [thinkpad hw controls](#thinkpad-hw-controls)
+    * [mac files (incl. sparsebundles)](#mac-files-incl-sparsebundles)
+    * [OS helper](#os-helper)
+    * [TODO / missing functionality list](#todo--missing-functionality-list)
+* [Appendix](#appendix)
+    * [boot into live iso](#boot-into-live-iso)
+    * [kernel compilation](#kernel-compilation)
+        * [initial ramdisk](#initial-ramdisk)
+        * [add LTS kernel to UEFI](#add-lts-kernel-to-uefi)
+    * [encrypting USB flash drives](#encrypting-usb-flash-drives)
+        * [manual usage](#manual-usage)
+        * [automatic mounting](#automatic-mounting)
+        * [automated script usage](#automated-script-usage)
+    * [manage packages](#manage-packages)
+    * [OPTIONAL: tiling window manager Awesome](#optional-tiling-window-manager-awesome)
+        * [awesome appendix: automatic window opening](#awesome-appendix-automatic-window-opening)
+    * [OPTIONAL: KDE plasma](#optional-kde-plasma)
+    * [List of all the need-to-have packages](#list-of-all-the-need-to-have-packages)
 
 <!-- Added by: natj, at: Sat 23 May 2020 11:32:51 AM EDT -->
 
@@ -94,19 +108,19 @@ systemctl start <service_name>
 
 ### installing from AUR
 
-Sooner or later some package is missing and needs to be installed from AUR instead. There are many tools to automate this but the compilation and dependency checking is automated well enough so that only a few steps are needed anyway. Therefore, I prefer to do this by hand as follows.
+Sooner or later some package is missing and needs to be installed from AUR instead. There are many tools to automate this but the compilation and dependency checking is made easy enough so that only a few steps are needed. Therefore, I prefer to do this by hand as follows.
 
 Create e.g. a `~/pkg` directory and git clone the pkg repo
 ```
-git clone address
+git clone <address>
 ```
 then compile and check dependencies
 ```
 makepkg -s 
 ```
-As an annoying feature sometimes the PGP key is missing. If you want to live dangerously and proceed anyway you can add `--skippgpcheck` option to skip the check.
+As an annoying safety feature, sometimes the PGP key is missing. If you want to live dangerously and proceed anyway you can add `--skippgpcheck` option to skip the check.
 
-Then install the new package
+Then install the new package with
 ```
 makepkg -i
 ```
@@ -135,14 +149,14 @@ yay -Syu --devel --timeupdate 	#Perform system upgrade, but also check for devel
 
 # Configuring
 
-After those preliminaries, here follows the actual list configurations.
+After those preliminaries, here follows the actual list of configurations I've figured out so far.
 
 
 ## time
 
 If you have opened Windows before installing Linux it might have messed your internal system clock. This is the clock that stores time when you shutdown the computer and reload. Win10 apparently overwrites the time with timezone settings so there might be +-few hour mismatch to real time in Linux.
 
-To update it reliable and easily install `ntp` then get the global time with
+To update it reliably and easily install `ntp` then get the global time with
 ```
 sudo ntpd -qg
 ```
@@ -164,7 +178,7 @@ System clock is quite stable and robust so I don't see any point launching a dae
 
 ## wifi
 
-For wifi you have two options: `netctl` or `NetworkManager`. Both are relatively easy to use BUT do not work if they are both running simultaneously. Pick one.
+For wifi you have two options: `netctl` or `NetworkManager`. Both are relatively easy to use BUT they do not work if they are both running simultaneously. Pick one.
 
 I went with 'NetworkManager'. It has worked ok ever since launching.
 
@@ -294,13 +308,7 @@ Replace `USERNAME` with your own.
 
 ## audio
 
-Audio needs the sof firmware driver.
-
-TODO: add correct package.
-
-TODO: pulse audio is actually also needed
-
-To set and modify the audio levels install also:
+Audio needs the sof firmware driver.  To set and modify the audio levels install also:
 ```
 alsa-utils
 ```
@@ -351,7 +359,7 @@ and record what button/combination is called what.
 
 Button action can be configured by modifying an event handler script at `/etc/acpi/handler.sh` and by restarting `acpi.service` / booting the machine.
 
-My script is at the bottom of this section.
+My script is at the end of this section.
 
 
 ### display brightness controls
@@ -447,7 +455,7 @@ add `.xinitrc` with:
 setxkbmap -option caps:none
 ```
 
-Increase typomatic delay by again adding to `.xinitrc`:
+Decrease typomatic delay by again adding to `.xinitrc`:
 ```
 xset r rate 225 33
 ```
@@ -492,60 +500,21 @@ URxvt.keysym.S-Return: \033[13;2u
 URxvt.keysym.C-Return: \033[13;5u
 ```
 
-After this `xrdb .Xresources` and restart your terminal. Testing can be done by first inserting `Ctrl+V` followed by `Return` and then testing your keybinding. E.g.
+After this `xrdb .Xresources` and restart your terminal. Testing can be done by first inserting `Ctrl+V` followed by `Return` and then testing your keybinding: 
 
-Activate key translation mode `Ctrl+V` + `Return`.
-Test new binding `Ctrl+Return`.
-This should print `\033[13;5u`
-
-
-## OPTIONAL: tiling window manager Awesome
-
-Tiling window managers are the best. I installed `awesome` to my Arch. 
-
-Process is relatively straightforward but to get transparency also working you need these packages:
-
-```
-xcompmgr
-transset-df
-awesome
-```
-
-In addition, the `.xinitrc` needs to be modified. Add these lines to the **end** of the file:
-
-```
-exec xcompmgr -c & #optional for real transparency
-exec awesome
-```
-
-Addendum: transparency causes issues with screen sharing with softwares like Zoom etc. I recommend not using it.
+- Activate key translation mode `Ctrl+V` + `Return`.  
+- Test new binding `Ctrl+Return`.
+- This should print `\033[13;5u`
 
 
-### automatic window opening
 
-Add these to the end of the `.config/awesome/rc.lua` to automatically load some apps at startup
-
-```
--- background apps
-awful.spawn.once("dropbox")
-awful.spawn.once("TogglDesktop", {minimized = true} )
-
--- make tag 2 ready with 3 terminals
-awful.spawn(terminal, { screen = 1, tag = "2", focus = false} )
-awful.spawn(terminal, { screen = 1, tag = "2", focus = false} )
-awful.spawn(terminal, { screen = 1, tag = "2", focus = false} )
-
--- autostart common apps
-awful.spawn.once("slack",   { screen = 1, tag = screen[1].tags[9], maximized = true, focus = false} )
-awful.spawn.once("firefox", { screen = 1, tag = screen[1].tags[1], maximized = true, } )
-```
-
-Change tags and screen as necessary.
 
 
 ## openssh
 
 Default ssh app from the public `openssh` package does not support kerberos tickets that need gssapi key exchange support. Instead, one needs to manually install `openssh-gssapi` from the AUR.
+
+If you do not know what a kerberos ticket is, then you should skip this step and go with the default ssh client.
 
 
 ## fingerprint reader
@@ -557,6 +526,9 @@ usbutils
 fprintd
 imagemagic
 ```
+
+NOTE: Future firmware updates might make this obsolete. Proceed with caution.
+
  
 First, let's check the status of the firmware with:
 ```
@@ -633,7 +605,7 @@ Refs:
 
 ## bluetooth
 
-Bluetooth installation is another pain the ass. 
+Bluetooth installation is another pain in the ass. 
 
 TODO: these notes are still incomplete. Bluetooth does work but only intermittently. Make it stable.
 
@@ -745,6 +717,9 @@ Finally, you can easily pair and connect to devices by launching
 blueman-applet
 ```
 
+
+As an end verdict I have a relatively easy to use bluetooh pairing that sometimes works. Not sure what to take home from this.
+
 Refs:
 - https://wiki.archlinux.org/index.php/bluetooth
 - https://wiki.archlinux.org/index.php/Blueman
@@ -754,7 +729,7 @@ Refs:
 - https://askubuntu.com/questions/180744/how-to-enable-hard-blocked-bluetooth-in-thinkpad-edge-320
 
 
-### delay bluetooth powering from restart
+### bluetooth appendix: delay bluetooth powering from restart
 
 Some users said that this helps. I did not find any diffrence.
 
@@ -777,7 +752,7 @@ WantedBy=multi-user.target
 then run `systemctl enable bluetooth-poweron`
 
 
-### pulse audio libraries
+### bluetooth appendix: pulse audio libraries
 
 Some also said that these are needed. Again I did not find these important.
 
@@ -787,7 +762,7 @@ load-module bluetooth-xx
 load-module bluetooth-yy
 ```
 
-### auto switch on connect
+### bluetooth appendix: auto switch on connect
 
 Modify `/etc/pulse/default.pa`
 ```
@@ -796,7 +771,7 @@ load-module module-switch-on-connect
 
 NOTE: `blueman-applet` does pulseaudio switching automatically. These modules seem to be **NOT** needed.
 
-### apple airpods
+### bluetooth appendix: apple airpods
 
 TODO: Getting Apple AirPods to work seems the trickiest. Not working reliably atm.
 
@@ -854,6 +829,7 @@ To bring the battery to full charge once (reverts back to previous levels after 
 ```
 sudo tlp fullcharge
 ```
+I've found this useful especially if I know that I need to travel and dont have access to charger for a while. Otherwise its good to keep the maximum charge at ~80% to extend the battery lifetime.
 
 
 Refs:
@@ -867,7 +843,7 @@ Refs:
 
 Create directory for the swap file e.g. into `/var/cache/swap`
 
-Initialize a 8GB file
+Initialize a 8GB file (ok'ish size for 16GB of RAM)
 ```
 dd if if=/dev/zero of=swapfile bs=1K count=8M
 sudo chmod 600 swapfile 
@@ -896,15 +872,18 @@ sudo swapoff swapfile
 sudo swapon -va
 ```
 
-## TODO: nnn file browser and media thumbnails
+## nnn file browser and media thumbnails
 
 install `nnn`. Then configure it.
 
-TODO: launcher script with `n`. See `.basrc`.
-TODO: nuke launching with right fall backs
+TODO: write about configuration.
+
+- launcher script with `n`. See `.bashrc`.
+- nuke launching with right fallbacks
 
 
-### xdg-open
+
+### nnn appendix: xdg-open - default apps for different file types
 
 To config it we need set xdg-mime types for different files.
 
@@ -926,7 +905,7 @@ Now lets set reasonable defaults:
 ```
 
 
-### preview
+### nnn appendix: preview 
 
 To make the preview plugin work we need to copy
 
@@ -947,24 +926,25 @@ nuke dependencies:
 ```
 bsdtar
 unrar
-zathura
 mpv,
 odt2txt
 w3m / lynx / elinks
 jq / python json.tool
 sxiv / viu
 mocplay
-zathura
 djvutxt
 exiftool
 ```
-aur:
+
+AUR additions:
+```
 7z
 glow
+```
 
 
 
-### pdf viewing with zathura
+### nnn appendix: pdf viewing with zathura
 
 For pdfs `zathura` is a minimal browsing application. Its Arch installation lacks a desktop mime link (this is a bug) that we need to add manually by sudo creating `/usr/share/application/zathura.desktop` with the following content
 
@@ -984,26 +964,15 @@ Refs:
 - https://github.com/escherdragon/zathura/blob/master/zathura.desktop
 
 
-## misc apps that work well in browser:
-
-Finally, not everything is needed as an local application. Some stuff seem to work ok in the browser (some in `firefox`, some in `chromium`).
-
-- email -> gmail
-- whatsapp -> whatsapp web
-- spotify -> web.spotify
-
-
 
 ## lock screen
 
+NOTE: After using this for a while it seems super buggy. Not recommended.
+
 ```
+yay -S xss-lock
 yay -S bc
 yay -S betterlockscreen
-```
-
-see the file /lib/system.d/betterlockscreen@.service and enable:
-```
-systemctl enable betterlockscreen@natj.service
 ```
 
 Pre-create image cache:
@@ -1017,6 +986,68 @@ auth sufficient pam_fprintd.so
 auth include system-auth
 ```
 
+And then use i3 to launch `xss-lock`.
+
+
+Alternatively, we could sign up a service.
+See the file /lib/system.d/betterlockscreen@.service and enable:
+```
+systemctl enable betterlockscreen@natj.service
+```
+
+
+## screenshots
+
+For taking screenshots install `scrot`.
+
+
+## Folder encryption
+
+install `ecryptfs` with simple user-friendly cli scripts:
+```
+yay -S ecryptfs-simple
+```
+
+load encrypt kernel module temporarily
+```
+sudo modprobe ecryptfs
+```
+
+
+create:
+```
+ecryptfs-setup-private --nopwcheck --noautomount
+```
+
+The mount point ("upper directory") for the encrypted folder will be at `~/Private` by default, however you can manually change this right after the setup command has finished running, by doing:
+
+```
+mv ~/Private /path/to/new/folder
+echo /path/to/new/folder > ~/.ecryptfs/Private.mnt
+```
+
+Mount passphrase is used to derive the actual file encryption master key.  
+It will be encrypted using the login passphrase and stored in this encrypted form in `~/.ecryptfs/wrapped-passphrase`. 
+ 
+Make sure this file does not get lost, otherwise you can never access your encrypted folder again! 
+You may want to run `ecryptfs-unwrap-passphrase` to see the mount passphrase in unencrypted form, write it down on a piece of paper, and keep it in a safe.
+
+
+
+Simple mounting:
+```
+ecryptfs-simple /path/to/foo /path/to/bar
+```
+
+Unmounting by mountpoint:
+```
+ecryptfs-simple -u /path/to/bar
+```
+
+## Fish shell
+
+You will be using terminal a lot. I recommend installing and configuring fish shell instead of bash.
+
 
 
 ----
@@ -1028,8 +1059,6 @@ auth include system-auth
 
 hunspell
 hunspell-en_US
-
-
 
 ## intel gpu
 
@@ -1047,11 +1076,6 @@ Refs:
 
 TODO: is it needed? Seems to work fine without.
 
-## sleep/hibernation
-
-TODO: there is no sleep by default, however power consumption is quite low at idle so not very urgent
-
-TODO: check `i3lock` for screen lock
 
 ## disk usage
 
@@ -1067,10 +1091,6 @@ tpacpi controls are in directory:
 /sys/devices/platform/thinkpad_acpi
 ```
 
-## screenshots
-
-install `scrot`
-
 
 ## mac files (incl. sparsebundles)
 
@@ -1083,12 +1103,7 @@ https://github.com/qdore/Mutate
 https://albertlauncher.github.io/help/
 
 
-
 ## TODO / missing functionality list
-
-TODO: modify default window positions to have 2/3 ratios.
-
-TODO: terminal does not always update
 
 TODO: proper folder viewer 
 
@@ -1097,12 +1112,6 @@ TODO: open script to open every file type
 TODO: OS helper: albert/mutate etc
 
 TODO: bluetooth + airpods
-
-TODO: awesome bar: squeeze battery text
-
-TODO: awesome bar: wifi bar
-
-TODO: awesome bar: toggl status
 
 
 
@@ -1138,8 +1147,6 @@ mkinitcpio
 This creates both the `default` (optimized) image and a `fallback` image (that skips autodetect hook of drivers and embeds everything into the image just in case).
 
 
-TODO:
-
 There might be messages during compile time about missing firmware:
 ```
 aic94xx
@@ -1149,25 +1156,21 @@ see https://wiki.archlinux.org/index.php/Mkinitcpio#Possibly_missing_firmware_fo
 
 These appear harmless as they are both some HDD/RAID drivers.
 
-TODO:
-
-warning: /etc/fwupd/remotes.d/lvfs-testing.conf installed as /etc/fwupd/remotes.d/lvfs-testing.conf.pacnew
-warning: /etc/fwupd/remotes.d/lvfs.conf installed as /etc/fwupd/remotes.d/lvfs.conf.pacnew
-
-
 Configuration is in `/etc/mkinitcpio.conf`
 
 
 ### add LTS kernel to UEFI 
 
-TODO:
+TODO: expand on this.
 
+```
 efibootmgr --disk /dev/sdX --part Y --create --label "Arch Linux LTS" --loader /vmlinuz-linux-lts --unicode 'root=PARTUUID=XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX rw initrd=\initramfs-linux-lts.img' --verbose
+```
 
 
 ## encrypting USB flash drives
 
-Almost directly copied from: https://zuttobenkyou.wordpress.com/2012/12/08/how-to-encrypt-your-usb-flash-drives/
+This part is almost directly copied from: https://zuttobenkyou.wordpress.com/2012/12/08/how-to-encrypt-your-usb-flash-drives/
 
 
 Find the correct device:
@@ -1305,6 +1308,105 @@ Query user installed packages:
 
 ```
 comm -23 <(pacman -Qqett | sort) <(pacman -Qqg base -g base-devel | sort | uniq)
+```
+
+
+## OPTIONAL: tiling window manager Awesome
+
+
+Tiling window managers are the best. I installed `awesome` to my Arch. 
+
+NOTE: I've switched to 'i3' and recommend you do the same. In the end its much more configurable and less buggy.
+
+
+Process is relatively straightforward but to get transparency also working you need these packages:
+
+```
+xcompmgr
+transset-df
+awesome
+```
+
+In addition, the `.xinitrc` needs to be modified. Add these lines to the **end** of the file:
+
+```
+exec xcompmgr -c & #optional for real transparency
+exec awesome
+```
+
+Addendum: transparency causes issues with screen sharing with softwares like Zoom etc. I recommend not using it.
+
+
+### awesome appendix: automatic window opening
+
+Add these to the end of the `.config/awesome/rc.lua` to automatically load some apps at startup
+
+```
+-- background apps
+awful.spawn.once("dropbox")
+awful.spawn.once("TogglDesktop", {minimized = true} )
+
+-- make tag 2 ready with 3 terminals
+awful.spawn(terminal, { screen = 1, tag = "2", focus = false} )
+awful.spawn(terminal, { screen = 1, tag = "2", focus = false} )
+awful.spawn(terminal, { screen = 1, tag = "2", focus = false} )
+
+-- autostart common apps
+awful.spawn.once("slack",   { screen = 1, tag = screen[1].tags[9], maximized = true, focus = false} )
+awful.spawn.once("firefox", { screen = 1, tag = screen[1].tags[1], maximized = true, } )
+```
+
+Change tags and screen as necessary.
+
+## OPTIONAL: KDE plasma
+
+`pacman -S xorg plasma plasma-wayland-session kde-applications`
+
+Once installed, enable the Display Manager and Network Manager services:
+
+```
+systemctl enable sddm.service
+systemctl enable NetworkManager.service
+```
+
+
+## List of all the need-to-have packages 
+
+```
+ntp
+NetworkManager/nmcli
+rxvt-unicode
+ttf-hack
+alsa-utils
+thinkpad_acpi
+acpid
+i3
+fwupdmgr
+usbutils
+fprintd
+imagemagic
+libsecret
+gnome-keyring
+tlp
+nnn
+xdotool
+tabbed
+zathura
+bsdtar
+unrar
+mpv
+dt2txt
+sxiv
+exiftool
+scrot
+```
+
+
+AUR
+
+```
+7z  
+glow 
 ```
 
 
