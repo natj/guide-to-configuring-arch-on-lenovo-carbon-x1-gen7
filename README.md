@@ -366,11 +366,11 @@ My script is at the end of this section.
 
 You can check the current brightness with:
 ```
-cat /sys/class/backlight/intel_backlight/brigthness
+cat /sys/class/backlight/intel_backlight/brightness
 ```
 and maximum possible brightness (to get a feeling of the scaling) with
 ```
-cat /sys/class/backlight/intel_backlight/max_brigthness
+cat /sys/class/backlight/intel_backlight/max_brightness
 ```
 
 Different machines might have different `bl_device` so check that `intel_backlight` exists.
